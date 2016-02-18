@@ -9,11 +9,13 @@ import com.headstartech.iam.core.services.DomainService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.Valid;
 import java.util.UUID;
 
 @Service
+@Transactional(rollbackFor = { Exception.class })
 public class JpaDomainService implements DomainService {
 
     private final JpaDomainRepository domainRepo;

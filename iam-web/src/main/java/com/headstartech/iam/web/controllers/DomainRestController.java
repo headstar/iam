@@ -3,8 +3,9 @@ package com.headstartech.iam.web.controllers;
 import com.headstartech.iam.common.dto.Domain;
 import com.headstartech.iam.common.exceptions.IAMException;
 import com.headstartech.iam.core.services.DomainService;
+import com.headstartech.iam.web.hateoas.assemblers.DomainResourceAssembler;
+import com.headstartech.iam.web.hateoas.resources.DomainResource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,10 +18,12 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 public class DomainRestController {
 
     private final DomainService domainService;
+    private final DomainResourceAssembler domainResourceAssembler;
 
     @Autowired
-    public DomainRestController(DomainService domainService) {
+    public DomainRestController(DomainService domainService, DomainResourceAssembler domainResourceAssembler) {
         this.domainService = domainService;
+        this.domainResourceAssembler = domainResourceAssembler;
     }
 
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -40,7 +43,7 @@ public class DomainRestController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public Domain getDomain(@PathVariable("id") final String id) throws IAMException {
-        return domainService.getDomain(id);
+    public DomainResource getDomain(@PathVariable("id") final String id) throws IAMException {
+        return this.domainResourceAssembler.toResource(domainService.getDomain(id));
     }
 }
