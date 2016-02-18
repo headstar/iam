@@ -4,6 +4,7 @@ dependencies {
     compile(project(":iam-core"))
 
     compile("org.springframework.boot:spring-boot-starter-web")
+    compile("org.springframework.boot:spring-boot-starter-actuator")
     compile("org.springframework.boot:spring-boot-starter-hateoas")
     runtime("mysql:mysql-connector-java")
 
