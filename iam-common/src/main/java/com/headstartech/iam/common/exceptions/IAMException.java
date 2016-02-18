@@ -2,18 +2,14 @@ package com.headstartech.iam.common.exceptions;
 
 public class IAMException extends Exception {
 
-    public IAMException() {
-    }
+    private final int errorCode;
 
-    public IAMException(String message) {
+    public IAMException(int errorCode, String message) {
         super(message);
+        this.errorCode = errorCode;
     }
 
-    public IAMException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public IAMException(Throwable cause) {
-        super(cause);
+    public int getErrorCode() {
+        return errorCode;
     }
 }

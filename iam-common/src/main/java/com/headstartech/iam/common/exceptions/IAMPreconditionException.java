@@ -1,19 +1,10 @@
 package com.headstartech.iam.common.exceptions;
 
+import java.net.HttpURLConnection;
+
 public class IAMPreconditionException extends IAMException {
 
-    public IAMPreconditionException() {
-    }
-
     public IAMPreconditionException(String message) {
-        super(message);
-    }
-
-    public IAMPreconditionException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public IAMPreconditionException(Throwable cause) {
-        super(cause);
+        super(HttpURLConnection.HTTP_PRECON_FAILED, message);
     }
 }

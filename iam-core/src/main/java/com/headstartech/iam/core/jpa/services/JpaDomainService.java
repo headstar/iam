@@ -1,6 +1,7 @@
 package com.headstartech.iam.core.jpa.services;
 
 import com.headstartech.iam.common.dto.Domain;
+import com.headstartech.iam.common.exceptions.IAMConflictException;
 import com.headstartech.iam.common.exceptions.IAMException;
 import com.headstartech.iam.common.exceptions.IAMNotFoundException;
 import com.headstartech.iam.core.jpa.entities.DomainEntity;
@@ -28,13 +29,14 @@ public class JpaDomainService implements DomainService {
     }
 
     @Override
-    public String createDomain(@Valid Domain domain) throws IAMException {
+    public String createDomain(Domain domain) throws IAMException {
         if (StringUtils.isNotBlank(domain.getId()) && domainRepo.exists(domain.getId())) {
-            throw new IAMException("A domain with id " + domain.getId() + " already exists");
+            throw new IAMConflictException("A domain with id " + domain.getId() + " already exists");
         }
 
         final DomainEntity domainEntity = new DomainEntity();
-        domainEntity.setId(StringUtils.isBlank(domainEntity.getId()) ? UUID.randomUUID().toString() : domainEntity.getId());
+        domainEntity.setId(StringUtils.isBlank(domain.getId()) ? UUID.randomUUID().toString() : domain.getId());
+        domainEntity.setDescription(domain.getDescription());
 
         return domainRepo.save(domainEntity).getId();
     }
