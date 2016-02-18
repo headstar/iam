@@ -1,6 +1,7 @@
 package com.headstartech.iam.core.jpa.services;
 
 import com.headstartech.iam.common.dto.Domain;
+import com.headstartech.iam.common.exceptions.IAMBadRequestException;
 import com.headstartech.iam.common.exceptions.IAMConflictException;
 import com.headstartech.iam.common.exceptions.IAMException;
 import com.headstartech.iam.common.exceptions.IAMNotFoundException;
@@ -8,6 +9,7 @@ import com.headstartech.iam.core.jpa.entities.DomainEntity;
 import com.headstartech.iam.core.jpa.repositories.JpaDomainRepository;
 import com.headstartech.iam.core.services.DomainService;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,7 +33,7 @@ public class JpaDomainService implements DomainService {
     @Override
     public String createDomain(Domain domain) throws IAMException {
         if (StringUtils.isNotBlank(domain.getId()) && domainRepo.exists(domain.getId())) {
-            throw new IAMConflictException("A domain with id " + domain.getId() + " already exists");
+            throw new IAMConflictException("A domain with id " + domain.getId() + " already exists.");
         }
 
         final DomainEntity domainEntity = new DomainEntity();
@@ -42,8 +44,28 @@ public class JpaDomainService implements DomainService {
     }
 
     @Override
+    public void updateDomain(String id, Domain domain) throws IAMException {
+        if (!this.domainRepo.exists(id)) {
+            throw new IAMNotFoundException("No domain exists with the given id, unable to update.");
+        }
+        if (!id.equals(domain.getId())) {
+            throw new IAMBadRequestException("Domain id inconsistent with id passed in.");
+        }
+
+        final DomainEntity domainEntity = findDomain(id);
+        domainEntity.setDescription(domain.getDescription());
+        domainRepo.save(domainEntity);
+    }
+
+    @Override
     public Domain getDomain(String id) throws IAMException {
         return findDomain(id).getDTO();
+    }
+
+    @Override
+    public void deleteDomain(String id) throws IAMException {
+        DomainEntity domainEntity = findDomain(id);
+        domainRepo.delete(domainEntity);
     }
 
     @Override

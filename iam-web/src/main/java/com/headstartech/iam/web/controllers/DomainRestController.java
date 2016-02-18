@@ -53,6 +53,15 @@ public class DomainRestController {
         return this.domainResourceAssembler.toResource(domainService.getDomain(id));
     }
 
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateDomain(
+            @PathVariable("id") final String id,
+            @RequestBody final Domain domain
+    ) throws IAMException {
+        domainService.updateDomain(id, domain);
+    }
+
     @RequestMapping(method = RequestMethod.GET, produces = MediaTypes.HAL_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public PagedResources<DomainResource> getDomains(@PageableDefault(page = 0, size = 10) final Pageable page,
@@ -60,5 +69,11 @@ public class DomainRestController {
         return assembler.toResource(
                 domainService.getDomains(page),
                 domainResourceAssembler);
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteDomain(@PathVariable("id") final String id) throws IAMException {
+        domainService.deleteDomain(id);
     }
 }
