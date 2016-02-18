@@ -7,7 +7,7 @@ public class Domain {
     @Size(max = 255, message = "Max length is 255 characters")
     private String id;
 
-    @Size(max = 5, message = "Max length is 255 characters")
+    @Size(max = 255, message = "Max length is 255 characters")
     private String description;
 
     public String getId() {
