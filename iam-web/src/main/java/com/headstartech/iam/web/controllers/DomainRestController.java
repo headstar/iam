@@ -34,7 +34,7 @@ public class DomainRestController {
 
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Void> createCommand(@RequestBody final Domain domain) throws IAMException {
+    public ResponseEntity<Void> createDomain(@RequestBody final Domain domain) throws IAMException {
         final String id = domainService.createDomain(domain);
         final HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(

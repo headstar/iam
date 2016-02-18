@@ -15,7 +15,7 @@ public class DomainEntity extends BaseEntity {
     @Length(max = 255, message = "Max length in database is 255 characters")
     private String description;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE}, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE}, orphanRemoval = true, mappedBy="domain")
     private Set<UserEntity> users = new HashSet<>();
 
     public Set<UserEntity> getUsers() {
