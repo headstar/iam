@@ -1,4 +1,6 @@
 dependencies {
     compile project(":iam-common")
+
+    compile("org.springframework.boot:spring-boot-starter-data-jpa")
     compile("org.apache.commons:commons-lang3")
 }

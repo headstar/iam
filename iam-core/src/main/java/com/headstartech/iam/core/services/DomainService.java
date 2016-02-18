@@ -7,4 +7,6 @@ public interface DomainService {
 
     String createDomain(final Domain domain) throws IAMException;
 
+    Domain getDomain(final String id) throws IAMException;
+
 }

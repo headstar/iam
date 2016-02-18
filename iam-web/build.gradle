@@ -1,17 +1,10 @@
 apply plugin: 'spring-boot'
 
 dependencies {
+    compile(project(":iam-core"))
+
     compile("org.springframework.boot:spring-boot-starter-web")
-}
+    compile("org.springframework.boot:spring-boot-starter-hateoas")
+    runtime("mysql:mysql-connector-java")
 
-// tomcat 7 is compatible with Java 6
-configurations.all {
-    resolutionStrategy {
-        eachDependency {
-            if (it.requested.group == 'org.apache.tomcat.embed') {
-                it.useVersion '7.0.56'
-            }
-        }
-    }
 }
-

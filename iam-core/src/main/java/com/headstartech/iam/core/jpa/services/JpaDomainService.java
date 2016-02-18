@@ -2,6 +2,7 @@ package com.headstartech.iam.core.jpa.services;
 
 import com.headstartech.iam.common.dto.Domain;
 import com.headstartech.iam.common.exceptions.IAMException;
+import com.headstartech.iam.common.exceptions.IAMNotFoundException;
 import com.headstartech.iam.core.jpa.entities.DomainEntity;
 import com.headstartech.iam.core.jpa.repositories.JpaDomainRepository;
 import com.headstartech.iam.core.services.DomainService;
@@ -32,5 +33,19 @@ public class JpaDomainService implements DomainService {
         domainEntity.setId(StringUtils.isBlank(domainEntity.getId()) ? UUID.randomUUID().toString() : domainEntity.getId());
 
         return domainRepo.save(domainEntity).getId();
+    }
+
+    @Override
+    public Domain getDomain(String id) throws IAMException {
+        return findDomain(id).getDTO();
+    }
+
+    private DomainEntity findDomain(final String id) throws IAMException {
+        final DomainEntity domainEntity= domainRepo.findOne(id);
+        if (domainEntity!= null) {
+            return domainEntity;
+        } else {
+            throw new IAMNotFoundException("No domain with id " + id + " exists.");
+        }
     }
 }
