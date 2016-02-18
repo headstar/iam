@@ -76,4 +76,10 @@ public class DomainRestController {
     public void deleteDomain(@PathVariable("id") final String id) throws IAMException {
         domainService.deleteDomain(id);
     }
+
+    @RequestMapping(method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteAllDomains() throws IAMException {
+        domainService.deleteAllDomains();
+    }
 }

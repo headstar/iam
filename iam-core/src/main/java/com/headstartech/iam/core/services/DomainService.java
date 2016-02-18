@@ -29,6 +29,7 @@ public interface DomainService {
             final String id
     ) throws IAMException;
 
+    void deleteAllDomains() throws IAMException;
 
     Page<Domain> getDomains(Pageable page);
 

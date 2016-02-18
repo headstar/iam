@@ -74,6 +74,13 @@ public class JpaDomainService implements DomainService {
         return domainEntities.map(DomainEntity::getDTO);
     }
 
+    @Override
+    public void deleteAllDomains() throws IAMException {
+        for (DomainEntity domainEntity : domainRepo.findAll()) {
+            deleteDomain(domainEntity.getId());
+        }
+    }
+
     private DomainEntity findDomain(final String id) throws IAMException {
         final DomainEntity domainEntity= domainRepo.findOne(id);
         if (domainEntity!= null) {
