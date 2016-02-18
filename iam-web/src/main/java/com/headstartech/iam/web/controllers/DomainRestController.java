@@ -6,7 +6,12 @@ import com.headstartech.iam.core.services.DomainService;
 import com.headstartech.iam.web.hateoas.assemblers.DomainResourceAssembler;
 import com.headstartech.iam.web.hateoas.resources.DomainResource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.MediaTypes;
+import org.springframework.hateoas.PagedResources;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -39,12 +44,21 @@ public class DomainRestController {
                         .buildAndExpand(id)
                         .toUri()
         );
-        return new ResponseEntity<Void>(httpHeaders, HttpStatus.CREATED);
+        return new ResponseEntity<>(httpHeaders, HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaTypes.HAL_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public DomainResource getDomain(@PathVariable("id") final String id) throws IAMException {
         return this.domainResourceAssembler.toResource(domainService.getDomain(id));
+    }
+
+    @RequestMapping(method = RequestMethod.GET, produces = MediaTypes.HAL_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public PagedResources<DomainResource> getDomains(@PageableDefault(page = 0, size = 10) final Pageable page,
+                                             final PagedResourcesAssembler<Domain> assembler) {
+        return assembler.toResource(
+                domainService.getDomains(page),
+                domainResourceAssembler);
     }
 }

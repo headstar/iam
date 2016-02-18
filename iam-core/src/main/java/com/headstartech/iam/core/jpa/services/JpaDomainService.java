@@ -8,6 +8,8 @@ import com.headstartech.iam.core.jpa.repositories.JpaDomainRepository;
 import com.headstartech.iam.core.services.DomainService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +42,12 @@ public class JpaDomainService implements DomainService {
     @Override
     public Domain getDomain(String id) throws IAMException {
         return findDomain(id).getDTO();
+    }
+
+    @Override
+    public Page<Domain> getDomains(Pageable page) {
+        Page<DomainEntity> domainEntities = domainRepo.findAll(page);
+        return domainEntities.map(DomainEntity::getDTO);
     }
 
     private DomainEntity findDomain(final String id) throws IAMException {
