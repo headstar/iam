@@ -6,6 +6,7 @@ import com.headstartech.iam.core.services.DomainService;
 import com.headstartech.iam.web.hateoas.assemblers.DomainResourceAssembler;
 import com.headstartech.iam.web.hateoas.resources.DomainResource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -41,7 +42,7 @@ public class DomainRestController {
         return new ResponseEntity<Void>(httpHeaders, HttpStatus.CREATED);
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaTypes.HAL_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public DomainResource getDomain(@PathVariable("id") final String id) throws IAMException {
         return this.domainResourceAssembler.toResource(domainService.getDomain(id));
