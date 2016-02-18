@@ -1,13 +1,8 @@
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.3.2.RELEASE")
-    }
-}
-
 apply plugin: 'spring-boot'
+
+dependencies {
+    compile("org.springframework.boot:spring-boot-starter-web")
+}
 
 // tomcat 7 is compatible with Java 6
 configurations.all {
@@ -20,6 +15,3 @@ configurations.all {
     }
 }
 
-dependencies {
-    compile("org.springframework.boot:spring-boot-starter-web:1.3.2.RELEASE")
-}
