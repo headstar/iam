@@ -1,5 +1,5 @@
 def String[] modules = [
-        'iam-web'
+        'iam-web', 'iam-core', 'iam-common'
 ]
 
 include modules
