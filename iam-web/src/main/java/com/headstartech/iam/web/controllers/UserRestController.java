@@ -1,5 +1,6 @@
 package com.headstartech.iam.web.controllers;
 
+import com.headstartech.iam.common.dto.Domain;
 import com.headstartech.iam.common.dto.User;
 import com.headstartech.iam.common.exceptions.IAMException;
 import com.headstartech.iam.core.services.UserService;
@@ -46,5 +47,19 @@ public class UserRestController {
     @ResponseStatus(HttpStatus.OK)
     public UserResource getUser(@PathVariable("domainId") final String domainId, @PathVariable("userId") final String userId) throws IAMException {
         return this.userResourceAssembler.toResource(userService.getUser(domainId, userId));
+    }
+
+    @RequestMapping(value = "/{userId}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateUser(@PathVariable("domainId") final String domainId, @PathVariable("userId") final String userId, @RequestBody final User user)
+     throws IAMException {
+        userService.updateUser(domainId, userId, user);
+    }
+
+    @RequestMapping(value = "/{userId}", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteUser(@PathVariable("domainId") final String domainId, @PathVariable("userId") final String userId)
+            throws IAMException {
+        userService.deleteUser(domainId, userId);
     }
 }
