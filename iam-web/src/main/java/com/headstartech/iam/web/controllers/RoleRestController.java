@@ -95,4 +95,16 @@ public class RoleRestController {
         roleService.addPermissions(domainId, roleId, permissionIds);
     }
 
+    @RequestMapping(value = "/{roleId}/permissions", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void setPermissions(@PathVariable("domainId") final String domainId, @PathVariable("roleId") final String roleId, @RequestBody Set<String> permissionIds) throws IAMException {
+        roleService.setPermissions(domainId, roleId, permissionIds);
+    }
+
+    @RequestMapping(value = "/{roleId}/permissions", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void removeAllPermissions(@PathVariable("domainId") final String domainId, @PathVariable("roleId") final String roleId) throws IAMException {
+        roleService.removeAllPermissions(domainId, roleId);
+    }
+
 }

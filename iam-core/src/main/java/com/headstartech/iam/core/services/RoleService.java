@@ -27,4 +27,8 @@ public interface RoleService {
     Set<Permission> getPermissions(String domainId, String roleId) throws IAMException;
 
     void addPermissions(String domainId, String roleId, Set<String> permissionIds) throws IAMException;
+
+    void setPermissions(String domainId, String roleId, Set<String> permissionIds) throws IAMException;
+
+    void removeAllPermissions(String domainId, String roleId) throws IAMException;
 }

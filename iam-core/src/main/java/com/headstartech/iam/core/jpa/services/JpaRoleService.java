@@ -19,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -91,6 +92,22 @@ public class JpaRoleService implements RoleService {
             PermissionEntity permissionEntity = findPermission(domainId, permissionId);
             roleEntity.addPermission(permissionEntity);
         }
+    }
+
+    @Override
+    public void setPermissions(String domainId, String roleId, Set<String> permissionIds) throws IAMException {
+        RoleEntity roleEntity = findRole(domainId, roleId);
+        Set<PermissionEntity> permissionEntities = new HashSet<>();
+        for(String permissionId : permissionIds) {
+            permissionEntities.add(findPermission(domainId, permissionId));
+        }
+        roleEntity.setPermissions(permissionEntities);
+    }
+
+    @Override
+    public void removeAllPermissions(String domainId, String roleId) throws IAMException {
+        RoleEntity roleEntity = findRole(domainId, roleId);
+        roleEntity.getPermissions().clear();
     }
 
     private RoleEntity findRole(final String domainId, final String roleId) throws IAMException {
