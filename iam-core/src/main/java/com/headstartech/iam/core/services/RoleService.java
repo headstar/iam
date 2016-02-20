@@ -1,7 +1,6 @@
 package com.headstartech.iam.core.services;
 
 import com.headstartech.iam.common.dto.Role;
-import com.headstartech.iam.common.dto.User;
 import com.headstartech.iam.common.exceptions.IAMException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

@@ -7,7 +7,7 @@ import org.springframework.hateoas.Resource;
 public class RoleResource extends Resource<Role> {
 
     @JsonCreator
-    public RoleResource(Role command) {
-        super(command);
+    public RoleResource(Role role) {
+        super(role);
     }
 }

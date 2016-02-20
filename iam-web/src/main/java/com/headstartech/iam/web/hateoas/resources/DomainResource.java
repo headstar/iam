@@ -7,7 +7,7 @@ import org.springframework.hateoas.Resource;
 public class DomainResource extends Resource<Domain> {
 
     @JsonCreator
-    public DomainResource(Domain command) {
-        super(command);
+    public DomainResource(Domain domain) {
+        super(domain);
     }
 }

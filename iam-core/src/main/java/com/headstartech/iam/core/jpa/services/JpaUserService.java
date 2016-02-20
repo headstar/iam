@@ -70,7 +70,6 @@ public class JpaUserService implements UserService {
     @Override
     public void deleteUser(String domainId, String userId) throws IAMException {
         UserEntity userEntity = findUser(domainId, userId);
-        userEntity.getDomain().removeUser(userEntity);
         userRepo.delete(userEntity);
     }
 

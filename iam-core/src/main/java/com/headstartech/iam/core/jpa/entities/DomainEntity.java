@@ -20,35 +20,9 @@ public class DomainEntity extends BaseEntity {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy="domain", orphanRemoval = true)
     private Set<RoleEntity> roles = new HashSet<>();
 
-    public Set<UserEntity> getUsers() {
-        return users;
-    }
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy="domain", orphanRemoval = true)
+    private Set<PermissionEntity> permissions = new HashSet<>();
 
-    public void setUsers(Set<UserEntity> users) {
-        this.users.clear();
-        if (users != null) {
-            this.users.addAll(users);
-        }
-    }
-
-    public void removeUser(UserEntity user) {
-        this.users.remove(user);
-    }
-
-    public Set<RoleEntity> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Set<RoleEntity> roles) {
-        this.roles.clear();
-        if (roles != null) {
-            this.roles.addAll(roles);
-        }
-    }
-
-    public void removeRole(RoleEntity role) {
-        this.roles.remove(role);
-    }
 
     public String getDescription() {
         return description;

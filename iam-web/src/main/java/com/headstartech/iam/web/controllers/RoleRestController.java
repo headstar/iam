@@ -33,8 +33,8 @@ public class RoleRestController {
 
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Void> createRole(@PathVariable("domainId") final String domainId, @RequestBody final Role user) throws IAMException {
-        final String id = roleService.createRole(domainId, user);
+    public ResponseEntity<Void> createRole(@PathVariable("domainId") final String domainId, @RequestBody final Role role) throws IAMException {
+        final String id = roleService.createRole(domainId, role);
         final HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(
                 ServletUriComponentsBuilder
@@ -55,23 +55,23 @@ public class RoleRestController {
                 roleResourceAssembler);
     }
 
-    @RequestMapping(value = "/{userId}", method = RequestMethod.GET, produces = MediaTypes.HAL_JSON_VALUE)
+    @RequestMapping(value = "/{roleId}", method = RequestMethod.GET, produces = MediaTypes.HAL_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public RoleResource getRole(@PathVariable("domainId") final String domainId, @PathVariable("userId") final String userId) throws IAMException {
-        return this.roleResourceAssembler.toResource(roleService.getRole(domainId, userId));
+    public RoleResource getRole(@PathVariable("domainId") final String domainId, @PathVariable("roleId") final String roleId) throws IAMException {
+        return this.roleResourceAssembler.toResource(roleService.getRole(domainId, roleId));
     }
 
-    @RequestMapping(value = "/{userId}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{roleId}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateRole(@PathVariable("domainId") final String domainId, @PathVariable("userId") final String userId, @RequestBody final Role user)
+    public void updateRole(@PathVariable("domainId") final String domainId, @PathVariable("roleId") final String roleId, @RequestBody final Role role)
      throws IAMException {
-        roleService.updateRole(domainId, userId, user);
+        roleService.updateRole(domainId, roleId, role);
     }
 
-    @RequestMapping(value = "/{userId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{roleId}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteRole(@PathVariable("domainId") final String domainId, @PathVariable("userId") final String userId)
+    public void deleteRole(@PathVariable("domainId") final String domainId, @PathVariable("roleId") final String roleId)
             throws IAMException {
-        roleService.deleteRole(domainId, userId);
+        roleService.deleteRole(domainId, roleId);
     }
 }

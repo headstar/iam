@@ -44,20 +44,20 @@ public class JpaRoleService implements RoleService {
 
     @Override
     public Page<Role> getRoles(Pageable page) {
-        Page<RoleEntity> userEntities = roleRepo.findAll(page);
-        return userEntities.map(RoleEntity::getDTO);
+        Page<RoleEntity> roleEntities = roleRepo.findAll(page);
+        return roleEntities.map(RoleEntity::getDTO);
     }
 
     @Override
-    public Role getRole(String domainId, String userId) throws IAMException {
-        RoleEntity roleEntity = findRole(domainId, userId);
+    public Role getRole(String domainId, String roleId) throws IAMException {
+        RoleEntity roleEntity = findRole(domainId, roleId);
         return roleEntity.getDTO();
     }
 
     @Override
-    public void updateRole(String domainId, String userId, Role role) throws IAMException {
-        RoleEntity roleEntity = findRole(domainId, userId);
-        if (!userId.equals(role.getId())) {
+    public void updateRole(String domainId, String roleId, Role role) throws IAMException {
+        RoleEntity roleEntity = findRole(domainId, roleId);
+        if (!roleId.equals(role.getId())) {
             throw new IAMBadRequestException("Role id inconsistent with id passed in.");
         }
 
@@ -66,22 +66,21 @@ public class JpaRoleService implements RoleService {
     }
 
     @Override
-    public void deleteRole(String domainId, String userId) throws IAMException {
-        RoleEntity roleEntity = findRole(domainId, userId);
-        roleEntity.getDomain().removeRole(roleEntity);
+    public void deleteRole(String domainId, String roleId) throws IAMException {
+        RoleEntity roleEntity = findRole(domainId, roleId);
         roleRepo.delete(roleEntity);
     }
 
-    private RoleEntity findRole(final String domainId, final String userId) throws IAMException {
-        final RoleEntity roleEntity = roleRepo.findOne(userId);
+    private RoleEntity findRole(final String domainId, final String roleId) throws IAMException {
+        final RoleEntity roleEntity = roleRepo.findOne(roleId);
         if (roleEntity!= null) {
             if(!roleEntity.getDomain().getId().equals(domainId)) {
-                throw new IAMNotFoundException("No role with id " + userId + " exists.");
+                throw new IAMNotFoundException("No role with id " + roleId + " exists.");
             }
 
             return roleEntity;
         } else {
-            throw new IAMNotFoundException("No role with id " + userId + " exists.");
+            throw new IAMNotFoundException("No role with id " + roleId + " exists.");
         }
     }
 
