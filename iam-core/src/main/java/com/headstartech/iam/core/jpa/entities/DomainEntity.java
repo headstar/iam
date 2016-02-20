@@ -3,10 +3,7 @@ package com.headstartech.iam.core.jpa.entities;
 import com.headstartech.iam.common.dto.Domain;
 import org.hibernate.validator.constraints.Length;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -17,10 +14,10 @@ public class DomainEntity extends BaseEntity {
     @Length(max = 255, message = "Max length in database is 255 characters")
     private String description;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy="domain")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy="domain", orphanRemoval = true)
     private Set<UserEntity> users = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy="domain")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy="domain", orphanRemoval = true)
     private Set<RoleEntity> roles = new HashSet<>();
 
     public Set<UserEntity> getUsers() {
