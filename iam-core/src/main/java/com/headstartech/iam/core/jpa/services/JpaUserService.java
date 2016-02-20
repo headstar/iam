@@ -10,13 +10,12 @@ import com.headstartech.iam.core.jpa.repositories.JpaDomainRepository;
 import com.headstartech.iam.core.jpa.repositories.JpaUserRepository;
 import com.headstartech.iam.core.services.UserService;
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 @Service
@@ -42,6 +41,12 @@ public class JpaUserService implements UserService {
         userEntity.setPassword(user.getPassword());
         userEntity.setDomain(domainEntity);
         return userRepo.save(userEntity).getId();
+    }
+
+    @Override
+    public Page<User> getUsers(Pageable page) {
+        Page<UserEntity> userEntities = userRepo.findAll(page);
+        return userEntities.map(UserEntity::getDTO);
     }
 
     @Override

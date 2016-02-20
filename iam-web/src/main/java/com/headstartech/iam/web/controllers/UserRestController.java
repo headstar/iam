@@ -5,9 +5,14 @@ import com.headstartech.iam.common.dto.User;
 import com.headstartech.iam.common.exceptions.IAMException;
 import com.headstartech.iam.core.services.UserService;
 import com.headstartech.iam.web.hateoas.assemblers.UserResourceAssembler;
+import com.headstartech.iam.web.hateoas.resources.DomainResource;
 import com.headstartech.iam.web.hateoas.resources.UserResource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.MediaTypes;
+import org.springframework.hateoas.PagedResources;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -41,6 +46,15 @@ public class UserRestController {
                         .toUri()
         );
         return new ResponseEntity<>(httpHeaders, HttpStatus.CREATED);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, produces = MediaTypes.HAL_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public PagedResources<UserResource> getUsers(@PageableDefault(page = 0, size = 10) final Pageable page,
+                                                     final PagedResourcesAssembler<User> assembler) {
+        return assembler.toResource(
+                userService.getUsers(page),
+                userResourceAssembler);
     }
 
     @RequestMapping(value = "/{userId}", method = RequestMethod.GET, produces = MediaTypes.HAL_JSON_VALUE)
