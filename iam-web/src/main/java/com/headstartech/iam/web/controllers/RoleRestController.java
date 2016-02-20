@@ -3,7 +3,9 @@ package com.headstartech.iam.web.controllers;
 import com.headstartech.iam.common.dto.Role;
 import com.headstartech.iam.common.exceptions.IAMException;
 import com.headstartech.iam.core.services.RoleService;
+import com.headstartech.iam.web.hateoas.assemblers.PermissionResourceAssembler;
 import com.headstartech.iam.web.hateoas.assemblers.RoleResourceAssembler;
+import com.headstartech.iam.web.hateoas.resources.PermissionResource;
 import com.headstartech.iam.web.hateoas.resources.RoleResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -11,6 +13,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.PagedResources;
+import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,17 +21,21 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.util.Set;
+
 @RestController
 @RequestMapping(value = "/domains/{domainId}/roles")
 public class RoleRestController {
 
     private final RoleService roleService;
     private final RoleResourceAssembler roleResourceAssembler;
+    private final PermissionResourceAssembler permissionResourceAssembler;
 
     @Autowired
-    public RoleRestController(RoleService roleService, RoleResourceAssembler roleResourceAssembler) {
+    public RoleRestController(RoleService roleService, RoleResourceAssembler roleResourceAssembler, PermissionResourceAssembler permissionResourceAssembler) {
         this.roleService = roleService;
         this.roleResourceAssembler = roleResourceAssembler;
+        this.permissionResourceAssembler = permissionResourceAssembler;
     }
 
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -74,4 +81,18 @@ public class RoleRestController {
             throws IAMException {
         roleService.deleteRole(domainId, roleId);
     }
+
+    @RequestMapping(value = "/{roleId}/permissions", method = RequestMethod.GET, produces = MediaTypes.HAL_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public Resources<PermissionResource> getPermissions(@PathVariable("domainId") final String domainId, @PathVariable("roleId") final String roleId) throws IAMException {
+        Resources<PermissionResource> resources = new Resources<>(permissionResourceAssembler.toResources(roleService.getPermissions(domainId, roleId)));
+        return resources;
+    }
+
+    @RequestMapping(value = "/{roleId}/permissions", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void addPermissions(@PathVariable("domainId") final String domainId, @PathVariable("roleId") final String roleId, @RequestBody Set<String> permissionIds) throws IAMException {
+        roleService.addPermissions(domainId, roleId, permissionIds);
+    }
+
 }

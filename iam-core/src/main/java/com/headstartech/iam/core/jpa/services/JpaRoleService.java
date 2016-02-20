@@ -1,12 +1,15 @@
 package com.headstartech.iam.core.jpa.services;
 
+import com.headstartech.iam.common.dto.Permission;
 import com.headstartech.iam.common.dto.Role;
 import com.headstartech.iam.common.exceptions.IAMBadRequestException;
 import com.headstartech.iam.common.exceptions.IAMException;
 import com.headstartech.iam.common.exceptions.IAMNotFoundException;
 import com.headstartech.iam.core.jpa.entities.DomainEntity;
+import com.headstartech.iam.core.jpa.entities.PermissionEntity;
 import com.headstartech.iam.core.jpa.entities.RoleEntity;
 import com.headstartech.iam.core.jpa.repositories.JpaDomainRepository;
+import com.headstartech.iam.core.jpa.repositories.JpaPermissionRepository;
 import com.headstartech.iam.core.jpa.repositories.JpaRoleRepository;
 import com.headstartech.iam.core.services.RoleService;
 import org.apache.commons.lang3.StringUtils;
@@ -16,7 +19,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(rollbackFor = { Exception.class })
@@ -24,11 +29,13 @@ public class JpaRoleService implements RoleService {
 
     private final JpaDomainRepository domainRepo;
     private final JpaRoleRepository roleRepo;
+    private final JpaPermissionRepository permissionRepository;
 
     @Autowired
-    public JpaRoleService(JpaDomainRepository domainRepo, JpaRoleRepository roleRepo) {
+    public JpaRoleService(JpaDomainRepository domainRepo, JpaRoleRepository roleRepo, JpaPermissionRepository permissionRepository) {
         this.domainRepo = domainRepo;
         this.roleRepo = roleRepo;
+        this.permissionRepository = permissionRepository;
     }
 
     @Override
@@ -71,6 +78,21 @@ public class JpaRoleService implements RoleService {
         roleRepo.delete(roleEntity);
     }
 
+    @Override
+    public Set<Permission> getPermissions(String domainId, String roleId) throws IAMException {
+        RoleEntity roleEntity = findRole(domainId, roleId);
+        return roleEntity.getPermissions().stream().map(PermissionEntity::getDTO).collect(Collectors.toSet());
+    }
+
+    @Override
+    public void addPermissions(String domainId, String roleId, Set<String> permissionIds) throws IAMException {
+        RoleEntity roleEntity = findRole(domainId, roleId);
+        for(String permissionId : permissionIds) {
+            PermissionEntity permissionEntity = findPermission(domainId, permissionId);
+            roleEntity.addPermission(permissionEntity);
+        }
+    }
+
     private RoleEntity findRole(final String domainId, final String roleId) throws IAMException {
         final RoleEntity roleEntity = roleRepo.findOne(roleId);
         if (roleEntity!= null) {
@@ -81,6 +103,19 @@ public class JpaRoleService implements RoleService {
             return roleEntity;
         } else {
             throw new IAMNotFoundException("No role with id " + roleId + " exists.");
+        }
+    }
+
+    private PermissionEntity findPermission(final String domainId, final String permissionId) throws IAMException {
+        final PermissionEntity permissionEntity = permissionRepository.findOne(permissionId);
+        if (permissionEntity!= null) {
+            if(!permissionEntity.getDomain().getId().equals(domainId)) {
+                throw new IAMNotFoundException("No permission with id " + permissionId + " exists.");
+            }
+
+            return permissionEntity;
+        } else {
+            throw new IAMNotFoundException("No permission with id " + permissionId + " exists.");
         }
     }
 

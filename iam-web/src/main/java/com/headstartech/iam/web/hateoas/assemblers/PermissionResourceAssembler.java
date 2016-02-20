@@ -1,12 +1,17 @@
 package com.headstartech.iam.web.hateoas.assemblers;
 
 import com.headstartech.iam.common.dto.Permission;
+import com.headstartech.iam.web.controllers.PermissionRestController;
 import com.headstartech.iam.web.hateoas.resources.PermissionResource;
-import org.springframework.hateoas.ResourceAssembler;
+import org.springframework.hateoas.mvc.ResourceAssemblerSupport;
 import org.springframework.stereotype.Component;
 
 @Component
-public class PermissionResourceAssembler  implements ResourceAssembler<Permission, PermissionResource> {
+public class PermissionResourceAssembler extends ResourceAssemblerSupport<Permission, PermissionResource> {
+
+    public PermissionResourceAssembler() {
+        super(PermissionRestController.class, PermissionResource.class);
+    }
 
     @Override
     public PermissionResource toResource(Permission role) {
