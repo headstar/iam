@@ -1,0 +1,13 @@
+package com.headstartech.iam.web.hateoas.resources;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.headstartech.iam.common.dto.Role;
+import org.springframework.hateoas.Resource;
+
+public class RoleResource extends Resource<Role> {
+
+    @JsonCreator
+    public RoleResource(Role command) {
+        super(command);
+    }
+}

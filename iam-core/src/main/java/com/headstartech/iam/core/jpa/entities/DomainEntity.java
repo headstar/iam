@@ -2,9 +2,11 @@ package com.headstartech.iam.core.jpa.entities;
 
 import com.headstartech.iam.common.dto.Domain;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,6 +20,9 @@ public class DomainEntity extends BaseEntity {
     @OneToMany(fetch = FetchType.LAZY, mappedBy="domain")
     private Set<UserEntity> users = new HashSet<>();
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy="domain")
+    private Set<RoleEntity> roles = new HashSet<>();
+
     public Set<UserEntity> getUsers() {
         return users;
     }
@@ -29,16 +34,24 @@ public class DomainEntity extends BaseEntity {
         }
     }
 
-    public void addUser(UserEntity user) {
-        if (user != null) {
-            this.users.add(user);
-        }
-    }
-
     public void removeUser(UserEntity user) {
         this.users.remove(user);
     }
 
+    public Set<RoleEntity> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<RoleEntity> roles) {
+        this.roles.clear();
+        if (roles != null) {
+            this.roles.addAll(roles);
+        }
+    }
+
+    public void removeRole(RoleEntity role) {
+        this.roles.remove(role);
+    }
 
     public String getDescription() {
         return description;

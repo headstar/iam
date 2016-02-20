@@ -1,10 +1,10 @@
 package com.headstartech.iam.web.controllers;
 
-import com.headstartech.iam.common.dto.User;
+import com.headstartech.iam.common.dto.Role;
 import com.headstartech.iam.common.exceptions.IAMException;
-import com.headstartech.iam.core.services.UserService;
-import com.headstartech.iam.web.hateoas.assemblers.UserResourceAssembler;
-import com.headstartech.iam.web.hateoas.resources.UserResource;
+import com.headstartech.iam.core.services.RoleService;
+import com.headstartech.iam.web.hateoas.assemblers.RoleResourceAssembler;
+import com.headstartech.iam.web.hateoas.resources.RoleResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -19,22 +19,22 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
-@RequestMapping(value = "/domains/{domainId}/users")
-public class UserRestController {
+@RequestMapping(value = "/domains/{domainId}/roles")
+public class RoleRestController {
 
-    private final UserService userService;
-    private final UserResourceAssembler userResourceAssembler;
+    private final RoleService roleService;
+    private final RoleResourceAssembler roleResourceAssembler;
 
     @Autowired
-    public UserRestController(UserService userService, UserResourceAssembler userResourceAssembler) {
-        this.userService = userService;
-        this.userResourceAssembler = userResourceAssembler;
+    public RoleRestController(RoleService roleService, RoleResourceAssembler roleResourceAssembler) {
+        this.roleService = roleService;
+        this.roleResourceAssembler = roleResourceAssembler;
     }
 
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Void> createUser(@PathVariable("domainId") final String domainId, @RequestBody final User user) throws IAMException {
-        final String id = userService.createUser(domainId, user);
+    public ResponseEntity<Void> createRole(@PathVariable("domainId") final String domainId, @RequestBody final Role user) throws IAMException {
+        final String id = roleService.createRole(domainId, user);
         final HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(
                 ServletUriComponentsBuilder
@@ -48,30 +48,30 @@ public class UserRestController {
 
     @RequestMapping(method = RequestMethod.GET, produces = MediaTypes.HAL_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public PagedResources<UserResource> getUsers(@PageableDefault(page = 0, size = 10) final Pageable page,
-                                                 final PagedResourcesAssembler<User> assembler) {
+    public PagedResources<RoleResource> getRoles(@PageableDefault(page = 0, size = 10) final Pageable page,
+                                                 final PagedResourcesAssembler<Role> assembler) {
         return assembler.toResource(
-                userService.getUsers(page),
-                userResourceAssembler);
+                roleService.getRoles(page),
+                roleResourceAssembler);
     }
 
     @RequestMapping(value = "/{userId}", method = RequestMethod.GET, produces = MediaTypes.HAL_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public UserResource getUser(@PathVariable("domainId") final String domainId, @PathVariable("userId") final String userId) throws IAMException {
-        return this.userResourceAssembler.toResource(userService.getUser(domainId, userId));
+    public RoleResource getRole(@PathVariable("domainId") final String domainId, @PathVariable("userId") final String userId) throws IAMException {
+        return this.roleResourceAssembler.toResource(roleService.getRole(domainId, userId));
     }
 
     @RequestMapping(value = "/{userId}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateUser(@PathVariable("domainId") final String domainId, @PathVariable("userId") final String userId, @RequestBody final User user)
+    public void updateRole(@PathVariable("domainId") final String domainId, @PathVariable("userId") final String userId, @RequestBody final Role user)
      throws IAMException {
-        userService.updateUser(domainId, userId, user);
+        roleService.updateRole(domainId, userId, user);
     }
 
     @RequestMapping(value = "/{userId}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteUser(@PathVariable("domainId") final String domainId, @PathVariable("userId") final String userId)
+    public void deleteRole(@PathVariable("domainId") final String domainId, @PathVariable("userId") final String userId)
             throws IAMException {
-        userService.deleteUser(domainId, userId);
+        roleService.deleteRole(domainId, userId);
     }
 }
