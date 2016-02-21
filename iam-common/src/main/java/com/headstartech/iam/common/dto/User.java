@@ -1,5 +1,8 @@
 package com.headstartech.iam.common.dto;
 
+import org.springframework.hateoas.core.Relation;
+
+@Relation(collectionRelation = "users")
 public class User extends BaseDTO {
 
     private String userName;

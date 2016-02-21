@@ -1,5 +1,8 @@
 package com.headstartech.iam.common.dto;
 
+import org.springframework.hateoas.core.Relation;
+
+@Relation(collectionRelation = "roles")
 public class Role extends BaseDTO {
 
     private String name;
