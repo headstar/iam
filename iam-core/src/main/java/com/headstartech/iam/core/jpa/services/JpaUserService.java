@@ -5,6 +5,7 @@ import com.headstartech.iam.common.dto.User;
 import com.headstartech.iam.common.exceptions.IAMBadRequestException;
 import com.headstartech.iam.common.exceptions.IAMException;
 import com.headstartech.iam.common.exceptions.IAMNotFoundException;
+import com.headstartech.iam.core.annotations.TransactionalService;
 import com.headstartech.iam.core.jpa.entities.DomainEntity;
 import com.headstartech.iam.core.jpa.entities.RoleEntity;
 import com.headstartech.iam.core.jpa.entities.UserEntity;
@@ -23,8 +24,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@Service
-@Transactional(rollbackFor = { Exception.class })
+@TransactionalService
 public class JpaUserService implements UserService {
 
     private final JpaDomainRepository domainRepo;

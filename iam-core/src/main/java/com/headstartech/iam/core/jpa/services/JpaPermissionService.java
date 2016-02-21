@@ -4,6 +4,7 @@ import com.headstartech.iam.common.dto.Permission;
 import com.headstartech.iam.common.exceptions.IAMBadRequestException;
 import com.headstartech.iam.common.exceptions.IAMException;
 import com.headstartech.iam.common.exceptions.IAMNotFoundException;
+import com.headstartech.iam.core.annotations.TransactionalService;
 import com.headstartech.iam.core.jpa.entities.DomainEntity;
 import com.headstartech.iam.core.jpa.entities.PermissionEntity;
 import com.headstartech.iam.core.jpa.repositories.JpaDomainRepository;
@@ -18,8 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
-@Service
-@Transactional(rollbackFor = { Exception.class })
+@TransactionalService
 public class JpaPermissionService implements PermissionService {
 
     private final JpaDomainRepository domainRepo;

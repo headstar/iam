@@ -5,6 +5,7 @@ import com.headstartech.iam.common.exceptions.IAMBadRequestException;
 import com.headstartech.iam.common.exceptions.IAMConflictException;
 import com.headstartech.iam.common.exceptions.IAMException;
 import com.headstartech.iam.common.exceptions.IAMNotFoundException;
+import com.headstartech.iam.core.annotations.TransactionalService;
 import com.headstartech.iam.core.jpa.entities.DomainEntity;
 import com.headstartech.iam.core.jpa.repositories.JpaDomainRepository;
 import com.headstartech.iam.core.services.DomainService;
@@ -19,8 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.validation.Valid;
 import java.util.UUID;
 
-@Service
-@Transactional(rollbackFor = { Exception.class })
+@TransactionalService
 public class JpaDomainService implements DomainService {
 
     private final JpaDomainRepository domainRepo;
