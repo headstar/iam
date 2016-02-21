@@ -1,13 +1,19 @@
 package com.headstartech.iam.web.hateoas.assemblers;
 
 import com.headstartech.iam.common.dto.Role;
+import com.headstartech.iam.web.controllers.RoleRestController;
 import com.headstartech.iam.web.hateoas.resources.RoleResource;
 import com.headstartech.iam.web.hateoas.resources.UserResource;
 import org.springframework.hateoas.ResourceAssembler;
+import org.springframework.hateoas.mvc.ResourceAssemblerSupport;
 import org.springframework.stereotype.Component;
 
 @Component
-public class RoleResourceAssembler implements ResourceAssembler<Role, RoleResource> {
+public class RoleResourceAssembler extends ResourceAssemblerSupport<Role, RoleResource> {
+
+    public RoleResourceAssembler() {
+        super(RoleRestController.class, RoleResource.class);
+    }
 
     @Override
     public RoleResource toResource(Role role) {

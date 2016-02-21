@@ -1,12 +1,15 @@
 package com.headstartech.iam.core.jpa.services;
 
+import com.headstartech.iam.common.dto.Role;
 import com.headstartech.iam.common.dto.User;
 import com.headstartech.iam.common.exceptions.IAMBadRequestException;
 import com.headstartech.iam.common.exceptions.IAMException;
 import com.headstartech.iam.common.exceptions.IAMNotFoundException;
 import com.headstartech.iam.core.jpa.entities.DomainEntity;
+import com.headstartech.iam.core.jpa.entities.RoleEntity;
 import com.headstartech.iam.core.jpa.entities.UserEntity;
 import com.headstartech.iam.core.jpa.repositories.JpaDomainRepository;
+import com.headstartech.iam.core.jpa.repositories.JpaRoleRepository;
 import com.headstartech.iam.core.jpa.repositories.JpaUserRepository;
 import com.headstartech.iam.core.services.UserService;
 import org.apache.commons.lang3.StringUtils;
@@ -16,7 +19,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(rollbackFor = { Exception.class })
@@ -24,11 +29,13 @@ public class JpaUserService implements UserService {
 
     private final JpaDomainRepository domainRepo;
     private final JpaUserRepository userRepo;
+    private final JpaRoleRepository roleRepo;
 
     @Autowired
-    public JpaUserService(JpaDomainRepository domainRepo, JpaUserRepository userRepo) {
+    public JpaUserService(JpaDomainRepository domainRepo, JpaUserRepository userRepo, JpaRoleRepository roleRepo) {
         this.domainRepo = domainRepo;
         this.userRepo = userRepo;
+        this.roleRepo = roleRepo;
     }
 
     @Override
@@ -71,6 +78,24 @@ public class JpaUserService implements UserService {
     public void deleteUser(String domainId, String userId) throws IAMException {
         UserEntity userEntity = findUser(domainId, userId);
         userRepo.delete(userEntity);
+    }
+
+    @Override
+    public void addRoles(String domainId, String userId, Set<String> roleIds) throws IAMException {
+        UserEntity userEntity = findUser(domainId, userId);
+        roleIds.stream().forEach(roleId -> userEntity.addRole(roleRepo.findOne(roleId)));
+    }
+
+    @Override
+    public Set<Role> getRoles(String domainId, String userId) throws IAMException {
+        UserEntity userEntity = findUser(domainId, userId);
+        return userEntity.getRoles().stream().map(RoleEntity::getDTO).collect(Collectors.toSet());
+    }
+
+    @Override
+    public void removeAllRoles(String domainId, String userId) throws IAMException {
+        UserEntity userEntity = findUser(domainId, userId);
+        userEntity.getRoles().clear();
     }
 
     private UserEntity findUser(final String domainId, final String userId) throws IAMException {

@@ -3,7 +3,10 @@ package com.headstartech.iam.web.controllers;
 import com.headstartech.iam.common.dto.User;
 import com.headstartech.iam.common.exceptions.IAMException;
 import com.headstartech.iam.core.services.UserService;
+import com.headstartech.iam.web.hateoas.assemblers.RoleResourceAssembler;
 import com.headstartech.iam.web.hateoas.assemblers.UserResourceAssembler;
+import com.headstartech.iam.web.hateoas.resources.PermissionResource;
+import com.headstartech.iam.web.hateoas.resources.RoleResource;
 import com.headstartech.iam.web.hateoas.resources.UserResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -11,6 +14,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.PagedResources;
+import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,17 +22,21 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.util.Set;
+
 @RestController
 @RequestMapping(value = "/domains/{domainId}/users")
 public class UserRestController {
 
     private final UserService userService;
     private final UserResourceAssembler userResourceAssembler;
+    private final RoleResourceAssembler roleResourceAssembler;
 
     @Autowired
-    public UserRestController(UserService userService, UserResourceAssembler userResourceAssembler) {
+    public UserRestController(UserService userService, UserResourceAssembler userResourceAssembler, RoleResourceAssembler roleResourceAssembler) {
         this.userService = userService;
         this.userResourceAssembler = userResourceAssembler;
+        this.roleResourceAssembler = roleResourceAssembler;
     }
 
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -73,5 +81,26 @@ public class UserRestController {
     public void deleteUser(@PathVariable("domainId") final String domainId, @PathVariable("userId") final String userId)
             throws IAMException {
         userService.deleteUser(domainId, userId);
+    }
+
+    @RequestMapping(value = "/{userId}/roles", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void addRoles(@PathVariable("domainId") final String domainId, @PathVariable("userId") final String userId, @RequestBody Set<String> roleIds)
+            throws IAMException {
+        userService.addRoles(domainId, userId, roleIds);
+    }
+
+    @RequestMapping(value = "/{userId}/roles", method = RequestMethod.GET, produces = MediaTypes.HAL_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public Resources<RoleResource> getRoles(@PathVariable("domainId") final String domainId, @PathVariable("userId") final String userId)
+            throws IAMException {
+        return new Resources<>(roleResourceAssembler.toResources(userService.getRoles(domainId, userId)));
+    }
+
+    @RequestMapping(value = "/{userId}/roles", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void removeAllRoles(@PathVariable("domainId") final String domainId, @PathVariable("userId") final String userId)
+            throws IAMException {
+        userService.removeAllRoles(domainId, userId);
     }
 }

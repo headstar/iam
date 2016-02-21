@@ -2,9 +2,8 @@ package com.headstartech.iam.core.jpa.entities;
 
 import com.headstartech.iam.common.dto.User;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 public class UserEntity extends BaseEntity {
@@ -14,6 +13,9 @@ public class UserEntity extends BaseEntity {
 
     @Column(name = "password", length = 255)
     private String password;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    private Set<RoleEntity> roles;
 
     @ManyToOne
     private DomainEntity domain;
@@ -40,6 +42,22 @@ public class UserEntity extends BaseEntity {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Set<RoleEntity> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<RoleEntity> roles) {
+        this.roles = roles;
+    }
+
+    public void addRole(RoleEntity role) {
+        getRoles().add(role);
+    }
+
+    public void removeRole(RoleEntity role) {
+        getRoles().remove(role);
     }
 
     public User getDTO() {

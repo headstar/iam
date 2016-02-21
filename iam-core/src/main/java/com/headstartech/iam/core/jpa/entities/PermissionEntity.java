@@ -1,7 +1,6 @@
 package com.headstartech.iam.core.jpa.entities;
 
 import com.headstartech.iam.common.dto.Permission;
-import com.headstartech.iam.common.dto.Role;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
