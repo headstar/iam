@@ -7,6 +7,7 @@ import javax.persistence.*;
 import java.util.Set;
 
 @Entity
+@Table(name = "permission")
 public class PermissionEntity extends BaseEntity {
 
     @Column(name = "name", length = 255)
