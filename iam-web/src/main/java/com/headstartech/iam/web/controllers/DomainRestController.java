@@ -1,5 +1,7 @@
 package com.headstartech.iam.web.controllers;
 
+import com.headstartech.iam.common.dto.AuthenticateRequest;
+import com.headstartech.iam.common.dto.AuthenticateResponse;
 import com.headstartech.iam.common.dto.Domain;
 import com.headstartech.iam.common.exceptions.IAMException;
 import com.headstartech.iam.core.services.DomainService;
@@ -81,5 +83,11 @@ public class DomainRestController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteAllDomains() throws IAMException {
         domainService.deleteAllDomains();
+    }
+
+    @RequestMapping(value = "/{id}/authenticate", method = RequestMethod.POST, produces = MediaTypes.HAL_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public AuthenticateResponse authenticateUser(@PathVariable("id") final String domainId, @RequestBody final AuthenticateRequest authenticateRequest) throws IAMException {
+        return domainService.authenticateUser(domainId, authenticateRequest);
     }
 }

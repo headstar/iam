@@ -1,5 +1,7 @@
 package com.headstartech.iam.core.services;
 
+import com.headstartech.iam.common.dto.AuthenticateRequest;
+import com.headstartech.iam.common.dto.AuthenticateResponse;
 import com.headstartech.iam.common.dto.Domain;
 import com.headstartech.iam.common.exceptions.IAMException;
 import org.hibernate.validator.constraints.NotBlank;
@@ -33,4 +35,5 @@ public interface DomainService {
 
     Page<Domain> getDomains(Pageable page);
 
+    AuthenticateResponse authenticateUser(String domainId, AuthenticateRequest authenticateRequest) throws IAMException;
 }

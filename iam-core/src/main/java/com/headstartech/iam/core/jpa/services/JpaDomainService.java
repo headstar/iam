@@ -1,5 +1,7 @@
 package com.headstartech.iam.core.jpa.services;
 
+import com.headstartech.iam.common.dto.AuthenticateRequest;
+import com.headstartech.iam.common.dto.AuthenticateResponse;
 import com.headstartech.iam.common.dto.Domain;
 import com.headstartech.iam.common.exceptions.IAMBadRequestException;
 import com.headstartech.iam.common.exceptions.IAMConflictException;
@@ -7,27 +9,31 @@ import com.headstartech.iam.common.exceptions.IAMException;
 import com.headstartech.iam.common.exceptions.IAMNotFoundException;
 import com.headstartech.iam.core.annotations.TransactionalService;
 import com.headstartech.iam.core.jpa.entities.DomainEntity;
+import com.headstartech.iam.core.jpa.entities.PermissionEntity;
+import com.headstartech.iam.core.jpa.entities.UserEntity;
 import com.headstartech.iam.core.jpa.repositories.JpaDomainRepository;
+import com.headstartech.iam.core.jpa.repositories.JpaUserRepository;
 import com.headstartech.iam.core.services.DomainService;
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.validation.Valid;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @TransactionalService
 public class JpaDomainService implements DomainService {
 
     private final JpaDomainRepository domainRepo;
+    private final JpaUserRepository userRepo;
 
     @Autowired
-    public JpaDomainService(JpaDomainRepository domainRepo) {
+    public JpaDomainService(JpaDomainRepository domainRepo, JpaUserRepository userRepo) {
         this.domainRepo = domainRepo;
+        this.userRepo = userRepo;
     }
 
     @Override
@@ -81,6 +87,26 @@ public class JpaDomainService implements DomainService {
         }
     }
 
+    @Override
+    public AuthenticateResponse authenticateUser(String domainId, AuthenticateRequest authenticateRequest) throws IAMException {
+        DomainEntity domainEntity = findDomain(domainId);
+        UserEntity userEntity = findUserByUserName(domainId, authenticateRequest.getUserName());
+        AuthenticateResponse response = new AuthenticateResponse();
+        response.setPermissions(new HashSet<>());
+        if(authenticate(userEntity, authenticateRequest)) {
+            Set<String> permissions = userEntity.getRoles().stream().map(role -> role.getPermissions()).flatMap(p -> p.stream()).map(pe -> pe.getName()).collect(Collectors.toSet());
+            response.setPermissions(permissions);
+            response.setAuthenticationSuccessful(true);
+        } else {
+            response.setAuthenticationSuccessful(false);
+        }
+        return response;
+    }
+
+    private boolean authenticate(UserEntity userEntity, AuthenticateRequest authenticateRequest) {
+        return userEntity.getPassword().equals(authenticateRequest.getPassword());
+    }
+
     private DomainEntity findDomain(final String id) throws IAMException {
         final DomainEntity domainEntity= domainRepo.findOne(id);
         if (domainEntity!= null) {
@@ -89,4 +115,19 @@ public class JpaDomainService implements DomainService {
             throw new IAMNotFoundException("No domain with id " + id + " exists.");
         }
     }
+
+    private UserEntity findUserByUserName(final String domainId, final String userName) throws IAMException {
+        // TODO: might return more than 1 user
+        final UserEntity userEntity = userRepo.findByUserName(userName);
+        if (userEntity!= null) {
+            if(!userEntity.getDomain().getId().equals(domainId)) {
+                throw new IAMNotFoundException("No user with userName " + userName + " exists.");
+            }
+
+            return userEntity;
+        } else {
+            throw new IAMNotFoundException("No user with userName " + userName + " exists.");
+        }
+    }
+
 }
