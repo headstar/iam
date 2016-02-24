@@ -21,6 +21,9 @@ public class RoleEntity extends BaseEntity {
     @ManyToMany(fetch = FetchType.LAZY)
     private Set<PermissionEntity> permissions;
 
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "roles")
+    private Set<UserEntity> users;
+
     public DomainEntity getDomain() {
         return domain;
     }
@@ -43,6 +46,14 @@ public class RoleEntity extends BaseEntity {
 
     public void setPermissions(Set<PermissionEntity> permissions) {
         this.permissions = permissions;
+    }
+
+    public Set<UserEntity> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Set<UserEntity> users) {
+        this.users = users;
     }
 
     public String getName() {
