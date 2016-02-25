@@ -36,7 +36,7 @@ public class JpaPermissionService implements PermissionService {
         DomainEntity domainEntity = findDomain(domainId);
 
         final PermissionEntity permissionEntity = new PermissionEntity();
-        permissionEntity.setId(StringUtils.isBlank(permission.getId()) ? UUID.randomUUID().toString() : permission.getId());
+        permissionEntity.setId(StringUtils.isBlank(permission.getId()) ? RandomString.randomId() : permission.getId());
         permissionEntity.setName(permission.getName());
         permissionEntity.setDomain(domainEntity);
         return permissionRepo.save(permissionEntity).getId();

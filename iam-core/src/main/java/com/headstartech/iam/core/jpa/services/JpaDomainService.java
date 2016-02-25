@@ -43,7 +43,7 @@ public class JpaDomainService implements DomainService {
         }
 
         final DomainEntity domainEntity = new DomainEntity();
-        domainEntity.setId(StringUtils.isBlank(domain.getId()) ? UUID.randomUUID().toString() : domain.getId());
+        domainEntity.setId(StringUtils.isBlank(domain.getId()) ? RandomString.randomId() : domain.getId());
         domainEntity.setDescription(domain.getDescription());
 
         return domainRepo.save(domainEntity).getId();

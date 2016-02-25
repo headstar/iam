@@ -43,7 +43,7 @@ public class JpaUserService implements UserService {
         DomainEntity domainEntity = findDomain(domainId);
 
         final UserEntity userEntity = new UserEntity();
-        userEntity.setId(StringUtils.isBlank(user.getId()) ? UUID.randomUUID().toString() : user.getId());
+        userEntity.setId(StringUtils.isBlank(user.getId()) ? RandomString.randomId() : user.getId());
         userEntity.setUserName(user.getUserName());
         userEntity.setPassword(user.getPassword());
         userEntity.setDomain(domainEntity);

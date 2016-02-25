@@ -44,7 +44,7 @@ public class JpaRoleService implements RoleService {
         DomainEntity domainEntity = findDomain(domainId);
 
         final RoleEntity roleEntity = new RoleEntity();
-        roleEntity.setId(StringUtils.isBlank(role.getId()) ? UUID.randomUUID().toString() : role.getId());
+        roleEntity.setId(StringUtils.isBlank(role.getId()) ? RandomString.randomId() : role.getId());
         roleEntity.setName(role.getName());
         roleEntity.setDomain(domainEntity);
         return roleRepo.save(roleEntity).getId();
