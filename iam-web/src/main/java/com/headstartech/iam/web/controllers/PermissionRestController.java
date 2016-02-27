@@ -9,6 +9,7 @@ import com.headstartech.iam.web.hateoas.assemblers.PermissionResourceAssembler;
 import com.headstartech.iam.web.hateoas.assemblers.RoleResourceAssembler;
 import com.headstartech.iam.web.hateoas.resources.PermissionResource;
 import com.headstartech.iam.web.hateoas.resources.RoleResource;
+import com.headstartech.iam.web.hateoas.resources.UserResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -37,7 +38,7 @@ public class PermissionRestController {
 
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Void> createPermission(@PathVariable("domainId") final String domainId, @RequestBody final Permission permission) throws IAMException {
+    public ResponseEntity<PermissionResource> createPermission(@PathVariable("domainId") final String domainId, @RequestBody final Permission permission) throws IAMException {
         final String id = permissionService.createPermission(domainId, permission);
         final HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(
@@ -47,7 +48,7 @@ public class PermissionRestController {
                         .buildAndExpand(id)
                         .toUri()
         );
-        return new ResponseEntity<>(httpHeaders, HttpStatus.CREATED);
+        return new ResponseEntity<>(permissionResourceAssembler.toResource(permissionService.getPermission(domainId, id)), httpHeaders, HttpStatus.CREATED);
     }
 
     @RequestMapping(method = RequestMethod.GET, produces = MediaTypes.HAL_JSON_VALUE)
@@ -62,14 +63,15 @@ public class PermissionRestController {
     @RequestMapping(value = "/{permissionId}", method = RequestMethod.GET, produces = MediaTypes.HAL_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public PermissionResource getPermission(@PathVariable("domainId") final String domainId, @PathVariable("permissionId") final String permissionId) throws IAMException {
-        return this.permissionResourceAssembler.toResource(permissionService.getPermission(domainId, permissionId));
+        return permissionResourceAssembler.toResource(permissionService.getPermission(domainId, permissionId));
     }
 
     @RequestMapping(value = "/{permissionId}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updatePermission(@PathVariable("domainId") final String domainId, @PathVariable("permissionId") final String permissionId, @RequestBody final Permission permission)
+    public PermissionResource updatePermission(@PathVariable("domainId") final String domainId, @PathVariable("permissionId") final String permissionId, @RequestBody final Permission permission)
             throws IAMException {
         permissionService.updatePermission(domainId, permissionId, permission);
+        return permissionResourceAssembler.toResource(permissionService.getPermission(domainId, permissionId));
     }
 
     @RequestMapping(value = "/{permissionId}", method = RequestMethod.DELETE)

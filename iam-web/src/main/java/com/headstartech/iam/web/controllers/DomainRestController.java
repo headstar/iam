@@ -36,7 +36,7 @@ public class DomainRestController {
 
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Void> createDomain(@RequestBody final Domain domain) throws IAMException {
+    public ResponseEntity<DomainResource> createDomain(@RequestBody final Domain domain) throws IAMException {
         final String id = domainService.createDomain(domain);
         final HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(
@@ -46,7 +46,7 @@ public class DomainRestController {
                         .buildAndExpand(id)
                         .toUri()
         );
-        return new ResponseEntity<>(httpHeaders, HttpStatus.CREATED);
+        return new ResponseEntity<>(domainResourceAssembler.toResource(domainService.getDomain(id)), httpHeaders, HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaTypes.HAL_JSON_VALUE)
@@ -56,12 +56,13 @@ public class DomainRestController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateDomain(
+    @ResponseStatus(HttpStatus.OK)
+    public DomainResource updateDomain(
             @PathVariable("id") final String id,
             @RequestBody final Domain domain
     ) throws IAMException {
         domainService.updateDomain(id, domain);
+        return domainResourceAssembler.toResource(domainService.getDomain(id));
     }
 
     @RequestMapping(method = RequestMethod.GET, produces = MediaTypes.HAL_JSON_VALUE)

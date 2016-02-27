@@ -40,7 +40,7 @@ public class RoleRestController {
 
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Void> createRole(@PathVariable("domainId") final String domainId, @RequestBody final Role role) throws IAMException {
+    public ResponseEntity<RoleResource> createRole(@PathVariable("domainId") final String domainId, @RequestBody final Role role) throws IAMException {
         final String id = roleService.createRole(domainId, role);
         final HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(
@@ -50,7 +50,7 @@ public class RoleRestController {
                         .buildAndExpand(id)
                         .toUri()
         );
-        return new ResponseEntity<>(httpHeaders, HttpStatus.CREATED);
+        return new ResponseEntity<>(roleResourceAssembler.toResource(roleService.getRole(domainId, id)), httpHeaders, HttpStatus.CREATED);
     }
 
     @RequestMapping(method = RequestMethod.GET, produces = MediaTypes.HAL_JSON_VALUE)
@@ -65,14 +65,15 @@ public class RoleRestController {
     @RequestMapping(value = "/{roleId}", method = RequestMethod.GET, produces = MediaTypes.HAL_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public RoleResource getRole(@PathVariable("domainId") final String domainId, @PathVariable("roleId") final String roleId) throws IAMException {
-        return this.roleResourceAssembler.toResource(roleService.getRole(domainId, roleId));
+        return roleResourceAssembler.toResource(roleService.getRole(domainId, roleId));
     }
 
     @RequestMapping(value = "/{roleId}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateRole(@PathVariable("domainId") final String domainId, @PathVariable("roleId") final String roleId, @RequestBody final Role role)
+    public RoleResource updateRole(@PathVariable("domainId") final String domainId, @PathVariable("roleId") final String roleId, @RequestBody final Role role)
      throws IAMException {
         roleService.updateRole(domainId, roleId, role);
+        return roleResourceAssembler.toResource(roleService.getRole(domainId, roleId));
     }
 
     @RequestMapping(value = "/{roleId}", method = RequestMethod.DELETE)

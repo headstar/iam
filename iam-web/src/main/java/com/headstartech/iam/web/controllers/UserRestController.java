@@ -41,7 +41,7 @@ public class UserRestController {
 
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Void> createUser(@PathVariable("domainId") final String domainId, @RequestBody final User user) throws IAMException {
+    public ResponseEntity<UserResource> createUser(@PathVariable("domainId") final String domainId, @RequestBody final User user) throws IAMException {
         final String id = userService.createUser(domainId, user);
         final HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(
@@ -51,7 +51,7 @@ public class UserRestController {
                         .buildAndExpand(id)
                         .toUri()
         );
-        return new ResponseEntity<>(httpHeaders, HttpStatus.CREATED);
+        return new ResponseEntity<>(userResourceAssembler.toResource(userService.getUser(domainId, id)), httpHeaders, HttpStatus.CREATED);
     }
 
     @RequestMapping(method = RequestMethod.GET, produces = MediaTypes.HAL_JSON_VALUE)
@@ -66,14 +66,15 @@ public class UserRestController {
     @RequestMapping(value = "/{userId}", method = RequestMethod.GET, produces = MediaTypes.HAL_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public UserResource getUser(@PathVariable("domainId") final String domainId, @PathVariable("userId") final String userId) throws IAMException {
-        return this.userResourceAssembler.toResource(userService.getUser(domainId, userId));
+        return userResourceAssembler.toResource(userService.getUser(domainId, userId));
     }
 
     @RequestMapping(value = "/{userId}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateUser(@PathVariable("domainId") final String domainId, @PathVariable("userId") final String userId, @RequestBody final User user)
+    public UserResource updateUser(@PathVariable("domainId") final String domainId, @PathVariable("userId") final String userId, @RequestBody final User user)
      throws IAMException {
         userService.updateUser(domainId, userId, user);
+        return userResourceAssembler.toResource(userService.getUser(domainId, userId));
     }
 
     @RequestMapping(value = "/{userId}", method = RequestMethod.DELETE)
