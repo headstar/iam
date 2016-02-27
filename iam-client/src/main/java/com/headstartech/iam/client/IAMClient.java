@@ -6,7 +6,6 @@ import com.headstartech.iam.common.dto.Role;
 import com.headstartech.iam.common.dto.User;
 import com.headstartech.iam.common.exceptions.IAMException;
 
-import java.awt.print.Pageable;
 import java.util.Set;
 
 public interface IAMClient {
@@ -29,6 +28,8 @@ public interface IAMClient {
 
     void deleteUser(String domainId, String userId);
 
+    Set<User> getUsersForDomain(String domainId);
+
     Role createRole(String domainId, Role role);
 
     Role getRole(String domainId, String roleId);
@@ -37,6 +38,8 @@ public interface IAMClient {
 
     void deleteRole(String domainId, String RoleId);
 
+    Set<Role> getRolesForDomain(String domainId);
+
     Permission createPermission(String domainId, Permission permissionId);
 
     Permission getPermission(String domainId, String permissionId);
@@ -44,6 +47,8 @@ public interface IAMClient {
     Permission updatePermission(String domainId, Permission permissionId);
 
     void deletePermission(String domainId, String permissionId);
+
+    Set<Permission> getPermissionsForDomain(String domainId);
 
     void addPermissionsForRole(String domainId, String roleId, Set<String> permissionIds);
 

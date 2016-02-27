@@ -19,6 +19,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class DefaultIAMClient implements IAMClient {
 
@@ -60,7 +61,7 @@ public class DefaultIAMClient implements IAMClient {
     public Set<Domain> getDomains() {
         RequestEntity<Void> request = RequestEntity.get(toURI(getDomainsBaseURL())).accept(MediaTypes.HAL_JSON).build();
         ResponseEntity<PagedDomainResources> responseEntity = restOperations.exchange(request, new ParameterizedTypeReference<PagedDomainResources>() {});
-        return new HashSet(responseEntity.getBody().getContent());
+        return responseEntity.getBody().getContent().stream().map(r -> r.getContent()).collect(Collectors.toSet());
     }
 
     @Override
@@ -91,6 +92,13 @@ public class DefaultIAMClient implements IAMClient {
     }
 
     @Override
+    public Set<User> getUsersForDomain(String domainId) {
+        RequestEntity<Void> request = RequestEntity.get(toURI(getUsersBaseURL(domainId))).accept(MediaTypes.HAL_JSON).build();
+        ResponseEntity<PagedUsersResources> responseEntity = restOperations.exchange(request, new ParameterizedTypeReference<PagedUsersResources>() {});
+        return responseEntity.getBody().getContent().stream().map(r -> r.getContent()).collect(Collectors.toSet());
+    }
+
+    @Override
     public Role createRole(String domainId, Role roleId) {
         RequestEntity<Role> request = RequestEntity.post(toURI(getRolesBaseURL(domainId))).accept(MediaTypes.HAL_JSON).contentType(MediaType.APPLICATION_JSON).body(roleId);
         ResponseEntity<RoleResource> responseEntity = restOperations.exchange(request, new ParameterizedTypeReference<RoleResource>() {});
@@ -118,6 +126,13 @@ public class DefaultIAMClient implements IAMClient {
     }
 
     @Override
+    public Set<Role> getRolesForDomain(String domainId) {
+        RequestEntity<Void> request = RequestEntity.get(toURI(getRolesBaseURL(domainId))).accept(MediaTypes.HAL_JSON).build();
+        ResponseEntity<PagedRolesResources> responseEntity = restOperations.exchange(request, new ParameterizedTypeReference<PagedRolesResources>() {});
+        return responseEntity.getBody().getContent().stream().map(r -> r.getContent()).collect(Collectors.toSet());
+    }
+
+    @Override
     public Permission createPermission(String domainId, Permission permissionId) {
         RequestEntity<Permission> request = RequestEntity.post(toURI(getPermissionsBaseURL(domainId))).accept(MediaTypes.HAL_JSON).contentType(MediaType.APPLICATION_JSON).body(permissionId);
         ResponseEntity<PermissionResource> responseEntity = restOperations.exchange(request, new ParameterizedTypeReference<PermissionResource>() {});
@@ -136,6 +151,13 @@ public class DefaultIAMClient implements IAMClient {
         RequestEntity<Permission> request = RequestEntity.put(toURI(getPermissionURL(domainId, permissionId.getId()))).accept(MediaTypes.HAL_JSON).contentType(MediaType.APPLICATION_JSON).body(permissionId);
         ResponseEntity<PermissionResource> responseEntity = restOperations.exchange(request, new ParameterizedTypeReference<PermissionResource>() {});
         return responseEntity.getBody().getContent();
+    }
+
+    @Override
+    public Set<Permission> getPermissionsForDomain(String domainId) {
+        RequestEntity<Void> request = RequestEntity.get(toURI(getPermissionsBaseURL(domainId))).accept(MediaTypes.HAL_JSON).build();
+        ResponseEntity<PagedPermissionsResources> responseEntity = restOperations.exchange(request, new ParameterizedTypeReference<PagedPermissionsResources>() {});
+        return responseEntity.getBody().getContent().stream().map(r -> r.getContent()).collect(Collectors.toSet());
     }
 
     @Override
@@ -244,6 +266,18 @@ public class DefaultIAMClient implements IAMClient {
     }
 
     static class PagedDomainResources extends PagedResources<DomainResource> {
+
+    }
+
+    static class PagedUsersResources extends PagedResources<UserResource> {
+
+    }
+
+    static class PagedRolesResources extends PagedResources<RoleResource> {
+
+    }
+
+    static class PagedPermissionsResources extends PagedResources<PermissionResource> {
 
     }
 }

@@ -8,16 +8,12 @@ import com.headstartech.iam.common.dto.Role;
 import com.headstartech.iam.common.dto.User;
 import com.headstartech.iam.common.exceptions.IAMException;
 import org.springframework.hateoas.MediaTypes;
-import org.springframework.hateoas.RelProvider;
 import org.springframework.hateoas.core.AnnotationRelProvider;
 import org.springframework.hateoas.core.DefaultRelProvider;
-import org.springframework.hateoas.core.DelegatingRelProvider;
 import org.springframework.hateoas.hal.Jackson2HalModule;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.plugin.core.OrderAwarePluginRegistry;
-import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
@@ -45,9 +41,13 @@ public class Sample {
         u.setPassword("secret");
         u = iamClient.createUser(d.getId(), u);
 
+        Set<User> users = iamClient.getUsersForDomain(d.getId());
+
         Role r = new Role();
         r.setName("ADMIN");
         r = iamClient.createRole(d.getId(), r);
+
+        Set<Role> roles = iamClient.getRolesForDomain(d.getId());
 
         Permission p1 = new Permission();
         p1.setName("READ");
@@ -56,6 +56,8 @@ public class Sample {
         Permission p2 = new Permission();
         p2.setName("WRITE");
         p2 = iamClient.createPermission(d.getId(), p2);
+
+        Set<Permission> permissions = iamClient.getPermissionsForDomain(d.getId());
 
         Set<String> ps = new HashSet<>();
         ps.add(p1.getId());
