@@ -1,0 +1,6 @@
+dependencies {
+    compile(project(":iam-common"))
+
+    compile("org.hibernate:hibernate-validator")
+    compile("org.springframework.boot:spring-boot-starter-hateoas")
+}
