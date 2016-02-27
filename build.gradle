@@ -33,6 +33,19 @@ subprojects {
     repositories {
         mavenCentral()
     }
+
+    ext {
+        generatedSourcesDir = new File("${projectDir}/src/generated")
+        generatedSourcesJavaDir = new File(generatedSourcesDir, "/java")
+    }
+
+    sourceSets {
+        main {
+            java {
+                srcDir generatedSourcesJavaDir
+            }
+        }
+    }
 }
 
 idea {

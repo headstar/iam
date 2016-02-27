@@ -12,17 +12,15 @@ import com.headstartech.iam.core.jpa.entities.RoleEntity;
 import com.headstartech.iam.core.jpa.repositories.JpaDomainRepository;
 import com.headstartech.iam.core.jpa.repositories.JpaPermissionRepository;
 import com.headstartech.iam.core.jpa.repositories.JpaRoleRepository;
+import com.headstartech.iam.core.jpa.specifications.JpaRoleSpecifications;
 import com.headstartech.iam.core.services.RoleService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @TransactionalService
@@ -51,8 +49,8 @@ public class JpaRoleService implements RoleService {
     }
 
     @Override
-    public Page<Role> getRoles(Pageable page) {
-        Page<RoleEntity> roleEntities = roleRepo.findAll(page);
+    public Page<Role> getRoles(String domainId, Pageable page) {
+        Page<RoleEntity> roleEntities = roleRepo.findAll(JpaRoleSpecifications.findRolesForDomain(domainId), page);
         return roleEntities.map(RoleEntity::getDTO);
     }
 

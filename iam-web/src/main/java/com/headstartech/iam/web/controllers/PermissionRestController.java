@@ -53,10 +53,10 @@ public class PermissionRestController {
 
     @RequestMapping(method = RequestMethod.GET, produces = MediaTypes.HAL_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public PagedResources<PermissionResource> getPermissions(@PageableDefault(page = 0, size = 10) final Pageable page,
+    public PagedResources<PermissionResource> getPermissions(@PathVariable("domainId") final String domainId, @PageableDefault(page = 0, size = 10) final Pageable page,
                                                              final PagedResourcesAssembler<Permission> assembler) {
         return assembler.toResource(
-                permissionService.getPermissions(page),
+                permissionService.getPermissions(domainId, page),
                 permissionResourceAssembler);
     }
 

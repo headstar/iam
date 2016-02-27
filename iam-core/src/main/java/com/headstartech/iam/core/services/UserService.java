@@ -22,7 +22,7 @@ public interface UserService {
 
     void deleteUser(String domainId, String userId) throws IAMException;
 
-    Page<User> getUsers(Pageable page);
+    Page<User> getUsers(String domainId, Pageable page);
 
     void addRoles(String domainId, String userId, Set<String> roleIds) throws IAMException;
 

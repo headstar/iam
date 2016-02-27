@@ -12,16 +12,14 @@ import com.headstartech.iam.core.jpa.entities.UserEntity;
 import com.headstartech.iam.core.jpa.repositories.JpaDomainRepository;
 import com.headstartech.iam.core.jpa.repositories.JpaRoleRepository;
 import com.headstartech.iam.core.jpa.repositories.JpaUserRepository;
+import com.headstartech.iam.core.jpa.specifications.JpaUserSpecifications;
 import com.headstartech.iam.core.services.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @TransactionalService
@@ -51,8 +49,8 @@ public class JpaUserService implements UserService {
     }
 
     @Override
-    public Page<User> getUsers(Pageable page) {
-        Page<UserEntity> userEntities = userRepo.findAll(page);
+    public Page<User> getUsers(String domainId, Pageable page) {
+        Page<UserEntity> userEntities = userRepo.findAll(JpaUserSpecifications.findUsersForDomain(domainId), page);
         return userEntities.map(UserEntity::getDTO);
     }
 

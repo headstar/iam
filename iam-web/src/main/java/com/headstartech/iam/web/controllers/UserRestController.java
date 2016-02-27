@@ -56,10 +56,10 @@ public class UserRestController {
 
     @RequestMapping(method = RequestMethod.GET, produces = MediaTypes.HAL_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public PagedResources<UserResource> getUsers(@PageableDefault(page = 0, size = 10) final Pageable page,
+    public PagedResources<UserResource> getUsers(@PathVariable("domainId") final String domainId, @PageableDefault(page = 0, size = 10) final Pageable page,
                                                  final PagedResourcesAssembler<User> assembler) {
         return assembler.toResource(
-                userService.getUsers(page),
+                userService.getUsers(domainId, page),
                 userResourceAssembler);
     }
 

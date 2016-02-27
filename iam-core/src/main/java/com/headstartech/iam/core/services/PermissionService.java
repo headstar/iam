@@ -20,5 +20,5 @@ public interface PermissionService {
 
     void deletePermission(String domainId, String userId) throws IAMException;
 
-    Page<Permission> getPermissions(Pageable page);
+    Page<Permission> getPermissions(String domainId, Pageable page);
 }

@@ -9,15 +9,12 @@ import com.headstartech.iam.core.jpa.entities.DomainEntity;
 import com.headstartech.iam.core.jpa.entities.PermissionEntity;
 import com.headstartech.iam.core.jpa.repositories.JpaDomainRepository;
 import com.headstartech.iam.core.jpa.repositories.JpaPermissionRepository;
+import com.headstartech.iam.core.jpa.specifications.JpaPermissionSpecifications;
 import com.headstartech.iam.core.services.PermissionService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.UUID;
 
 @TransactionalService
 public class JpaPermissionService implements PermissionService {
@@ -43,9 +40,9 @@ public class JpaPermissionService implements PermissionService {
     }
 
     @Override
-    public Page<Permission> getPermissions(Pageable page) {
-        Page<PermissionEntity> userEntities = permissionRepo.findAll(page);
-        return userEntities.map(PermissionEntity::getDTO);
+    public Page<Permission> getPermissions(String domainId, Pageable page) {
+        Page<PermissionEntity> permissionEntities = permissionRepo.findAll(JpaPermissionSpecifications.findPermissionsForDomain(domainId), page);
+        return permissionEntities.map(PermissionEntity::getDTO);
     }
 
     @Override
