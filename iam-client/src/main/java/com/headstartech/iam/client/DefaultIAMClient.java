@@ -7,7 +7,9 @@ import com.headstartech.iam.common.dto.Role;
 import com.headstartech.iam.common.dto.User;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.hateoas.MediaTypes;
+import org.springframework.hateoas.PagedResources;
 import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.Resources;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,8 @@ import org.springframework.web.client.RestOperations;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashSet;
+import java.util.Set;
 
 public class DefaultIAMClient implements IAMClient {
 
@@ -50,6 +54,13 @@ public class DefaultIAMClient implements IAMClient {
     @Override
     public void deleteDomain(String id) {
         restOperations.delete(getDomainURL(id));
+    }
+
+    @Override
+    public Set<Domain> getDomains() {
+        RequestEntity<Void> request = RequestEntity.get(toURI(getDomainsBaseURL())).accept(MediaTypes.HAL_JSON).build();
+        ResponseEntity<PagedDomainResources> responseEntity = restOperations.exchange(request, new ParameterizedTypeReference<PagedDomainResources>() {});
+        return new HashSet(responseEntity.getBody().getContent());
     }
 
     @Override
@@ -128,6 +139,30 @@ public class DefaultIAMClient implements IAMClient {
     }
 
     @Override
+    public void addPermissionsForRole(String domainId, String roleId, Set<String> permissionIds) {
+        RequestEntity<Set<String>> request = RequestEntity.post(toURI(getRolePermissionsURL(domainId, roleId))).contentType(MediaType.APPLICATION_JSON).body(permissionIds);
+        restOperations.exchange(request, Void.class);
+    }
+
+    @Override
+    public void setPermissionsForRole(String domainId, String roleId, Set<String> permissionIds) {
+        RequestEntity<Set<String>> request = RequestEntity.put(toURI(getRolePermissionsURL(domainId, roleId))).contentType(MediaType.APPLICATION_JSON).body(permissionIds);
+        restOperations.exchange(request, Void.class);
+    }
+
+    @Override
+    public void removeAllPermissionsForRole(String domainId, String roleId) {
+        restOperations.delete(toURI(getRolePermissionsURL(domainId, roleId)));
+    }
+
+    @Override
+    public Set<Permission> getPermissionsForRole(String domainId, String roleId) {
+        RequestEntity<Void> request = RequestEntity.get(toURI(getRolePermissionsURL(domainId, roleId))).accept(MediaTypes.HAL_JSON).build();
+        ResponseEntity<PermissionResources> responseEntity = restOperations.exchange(request, new ParameterizedTypeReference<PermissionResources>() {});
+        return new HashSet(responseEntity.getBody().getContent());
+    }
+
+    @Override
     public void deletePermission(String domainId, String permissionId) {
         restOperations.delete(getPermissionURL(domainId, permissionId));
     }
@@ -158,6 +193,10 @@ public class DefaultIAMClient implements IAMClient {
 
     private String getPermissionsBaseURL(String domainId) {
         return String.format("%s/%s/permissions", getDomainsBaseURL(), domainId);
+    }
+
+    private String getRolePermissionsURL(String domainId, String roleId) {
+        return String.format("%s/permissions", getRoleURL(domainId, roleId));
     }
 
     private String getPermissionURL(String domainId, String permissionId) {
@@ -198,5 +237,13 @@ public class DefaultIAMClient implements IAMClient {
         public PermissionResource (Permission permission) {
             super(permission);
         }
+    }
+
+    static class PermissionResources extends Resources<Permission> {
+
+    }
+
+    static class PagedDomainResources extends PagedResources<DomainResource> {
+
     }
 }
