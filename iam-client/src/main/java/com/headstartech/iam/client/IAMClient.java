@@ -28,7 +28,7 @@ public interface IAMClient {
 
     void deleteUser(String domainId, String userId);
 
-    Set<User> getUsersForDomain(String domainId);
+    Set<User> getUsers(String domainId);
 
     Role createRole(String domainId, Role role);
 
@@ -38,7 +38,7 @@ public interface IAMClient {
 
     void deleteRole(String domainId, String RoleId);
 
-    Set<Role> getRolesForDomain(String domainId);
+    Set<Role> getRoles(String domainId);
 
     Permission createPermission(String domainId, Permission permissionId);
 
@@ -48,7 +48,7 @@ public interface IAMClient {
 
     void deletePermission(String domainId, String permissionId);
 
-    Set<Permission> getPermissionsForDomain(String domainId);
+    Set<Permission> getPermissions(String domainId);
 
     void addPermissionsForRole(String domainId, String roleId, Set<String> permissionIds);
 

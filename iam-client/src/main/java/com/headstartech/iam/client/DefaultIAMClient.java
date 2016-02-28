@@ -92,7 +92,7 @@ public class DefaultIAMClient implements IAMClient {
     }
 
     @Override
-    public Set<User> getUsersForDomain(String domainId) {
+    public Set<User> getUsers(String domainId) {
         RequestEntity<Void> request = RequestEntity.get(toURI(getUsersBaseURL(domainId))).accept(MediaTypes.HAL_JSON).build();
         ResponseEntity<PagedUsersResources> responseEntity = restOperations.exchange(request, new ParameterizedTypeReference<PagedUsersResources>() {});
         return responseEntity.getBody().getContent().stream().map(r -> r.getContent()).collect(Collectors.toSet());
@@ -126,7 +126,7 @@ public class DefaultIAMClient implements IAMClient {
     }
 
     @Override
-    public Set<Role> getRolesForDomain(String domainId) {
+    public Set<Role> getRoles(String domainId) {
         RequestEntity<Void> request = RequestEntity.get(toURI(getRolesBaseURL(domainId))).accept(MediaTypes.HAL_JSON).build();
         ResponseEntity<PagedRolesResources> responseEntity = restOperations.exchange(request, new ParameterizedTypeReference<PagedRolesResources>() {});
         return responseEntity.getBody().getContent().stream().map(r -> r.getContent()).collect(Collectors.toSet());
@@ -154,7 +154,7 @@ public class DefaultIAMClient implements IAMClient {
     }
 
     @Override
-    public Set<Permission> getPermissionsForDomain(String domainId) {
+    public Set<Permission> getPermissions(String domainId) {
         RequestEntity<Void> request = RequestEntity.get(toURI(getPermissionsBaseURL(domainId))).accept(MediaTypes.HAL_JSON).build();
         ResponseEntity<PagedPermissionsResources> responseEntity = restOperations.exchange(request, new ParameterizedTypeReference<PagedPermissionsResources>() {});
         return responseEntity.getBody().getContent().stream().map(r -> r.getContent()).collect(Collectors.toSet());

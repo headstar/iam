@@ -41,13 +41,13 @@ public class Sample {
         u.setPassword("secret");
         u = iamClient.createUser(d.getId(), u);
 
-        Set<User> users = iamClient.getUsersForDomain(d.getId());
+        Set<User> users = iamClient.getUsers(d.getId());
 
         Role r = new Role();
         r.setName("ADMIN");
         r = iamClient.createRole(d.getId(), r);
 
-        Set<Role> roles = iamClient.getRolesForDomain(d.getId());
+        Set<Role> roles = iamClient.getRoles(d.getId());
 
         Permission p1 = new Permission();
         p1.setName("READ");
@@ -57,7 +57,7 @@ public class Sample {
         p2.setName("WRITE");
         p2 = iamClient.createPermission(d.getId(), p2);
 
-        Set<Permission> permissions = iamClient.getPermissionsForDomain(d.getId());
+        Set<Permission> permissions = iamClient.getPermissions(d.getId());
 
         Set<String> ps = new HashSet<>();
         ps.add(p1.getId());
