@@ -57,7 +57,7 @@ public class DefaultIAMClient implements IAMClient {
 
     @Override
     public void deleteDomain(String id) {
-        restOperations.delete(getDomainURL(id));
+        execute(createRequest(HttpMethod.DELETE, getDomainURL(id)));
     }
 
     @Override
@@ -87,7 +87,7 @@ public class DefaultIAMClient implements IAMClient {
 
     @Override
     public void deleteUser(String domainId, String userId) {
-        restOperations.delete(getUserURL(domainId, userId));
+        execute(createRequest(HttpMethod.DELETE, getUserURL(domainId, userId)));
     }
 
     @Override
@@ -117,7 +117,7 @@ public class DefaultIAMClient implements IAMClient {
 
     @Override
     public void deleteRole(String domainId, String roleId) {
-        restOperations.delete(getRoleURL(domainId, roleId));
+        execute(createRequest(HttpMethod.DELETE, getRoleURL(domainId, roleId)));
     }
 
     @Override
@@ -145,6 +145,11 @@ public class DefaultIAMClient implements IAMClient {
     }
 
     @Override
+    public void deletePermission(String domainId, String permissionId) {
+        execute(createRequest(HttpMethod.DELETE, getPermissionURL(domainId, permissionId)));
+    }
+
+    @Override
     public Set<Permission> getPermissions(String domainId) {
         ResponseEntity<PagedPermissionsResources> responseEntity = execute(createRequest(HttpMethod.GET, getPermissionsBaseURL(domainId)), new ParameterizedTypeReference<PagedPermissionsResources>() {});
         return responseEntity.getBody().getContent().stream().map(r -> r.getContent()).collect(Collectors.toSet());
@@ -162,18 +167,13 @@ public class DefaultIAMClient implements IAMClient {
 
     @Override
     public void removeAllPermissionsForRole(String domainId, String roleId) {
-        restOperations.delete(toURI(getRolePermissionsURL(domainId, roleId)));
+        execute(createRequest(HttpMethod.DELETE, getRolePermissionsURL(domainId, roleId)));
     }
 
     @Override
     public Set<Permission> getPermissionsForRole(String domainId, String roleId) {
         ResponseEntity<PermissionResources> responseEntity = execute(createRequest(HttpMethod.GET, getRolePermissionsURL(domainId, roleId)), new ParameterizedTypeReference<PermissionResources>() {});
         return new HashSet(responseEntity.getBody().getContent());
-    }
-
-    @Override
-    public void deletePermission(String domainId, String permissionId) {
-        restOperations.delete(getPermissionURL(domainId, permissionId));
     }
 
     private RequestEntity<Void> createRequest(HttpMethod httpMethod, String uri) {

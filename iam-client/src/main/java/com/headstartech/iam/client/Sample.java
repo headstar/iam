@@ -66,7 +66,6 @@ public class Sample {
 
         Set<Permission> psRead = iamClient.getPermissionsForRole(d.getId(), r.getId());
 
-
     }
     private static MappingJackson2HttpMessageConverter jsonConverter() {
         MappingJackson2HttpMessageConverter jacksonConverter = new MappingJackson2HttpMessageConverter();
