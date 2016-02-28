@@ -3,6 +3,8 @@ package com.headstartech.iam.core.jpa.entities;
 import com.headstartech.iam.common.dto.User;
 
 import javax.persistence.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 @Entity
@@ -20,6 +22,17 @@ public class UserEntity extends BaseEntity {
 
     @ManyToOne
     private DomainEntity domain;
+
+    @ElementCollection
+    private Map<String, String> attributes = new HashMap<>();
+
+    public Map<String, String> getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(Map<String, String> attributes) {
+        this.attributes = attributes;
+    }
 
     public DomainEntity getDomain() {
         return domain;
@@ -66,6 +79,7 @@ public class UserEntity extends BaseEntity {
         user.setId(getId());
         user.setUserName(getUserName());
         user.setPassword(getPassword());
+        user.setAttributes(getAttributes());
         return user;
     }
 }

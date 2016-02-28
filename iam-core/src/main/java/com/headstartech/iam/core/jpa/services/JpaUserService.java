@@ -45,6 +45,7 @@ public class JpaUserService implements UserService {
         userEntity.setUserName(user.getUserName());
         userEntity.setPassword(user.getPassword());
         userEntity.setDomain(domainEntity);
+        userEntity.setAttributes(user.getAttributes());
         return userRepo.save(userEntity).getId();
     }
 
@@ -69,6 +70,7 @@ public class JpaUserService implements UserService {
 
         userEntity.setUserName(user.getUserName());
         userEntity.setPassword(user.getPassword());
+        userEntity.setAttributes(user.getAttributes());
         userRepo.save(userEntity);
     }
 
