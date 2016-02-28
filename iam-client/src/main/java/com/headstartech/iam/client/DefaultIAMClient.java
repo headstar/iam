@@ -10,6 +10,7 @@ import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.PagedResources;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,10 @@ import java.util.stream.Collectors;
 
 public class DefaultIAMClient implements IAMClient {
 
+    private static final ParameterizedTypeReference<DomainResource> domainResourceTypeReference = new ParameterizedTypeReference<DomainResource>() {};
+    private static final ParameterizedTypeReference<UserResource> userResourceTypeReference = new ParameterizedTypeReference<UserResource>() {};
+    private static final ParameterizedTypeReference<RoleResource> roleResourceTypeReference = new ParameterizedTypeReference<RoleResource>() {};
+
     private final RestOperations restOperations;
     private final String baseRestURL;
 
@@ -33,22 +38,20 @@ public class DefaultIAMClient implements IAMClient {
 
     @Override
     public Domain createDomain(Domain domain) {
-        RequestEntity<Domain> request = RequestEntity.post(toURI(getDomainsBaseURL())).accept(MediaTypes.HAL_JSON).contentType(MediaType.APPLICATION_JSON).body(domain);
-        ResponseEntity<DomainResource> responseEntity = restOperations.exchange(request, new ParameterizedTypeReference<DomainResource>() {});
+        ResponseEntity<DomainResource> responseEntity = execute(createRequest(HttpMethod.POST, getDomainsBaseURL(), domain), domainResourceTypeReference);
         return responseEntity.getBody().getContent();
     }
 
+
     @Override
     public Domain getDomain(String domainId) {
-        RequestEntity<Void> request = RequestEntity.get(toURI(getDomainURL(domainId))).accept(MediaTypes.HAL_JSON).build();
-        ResponseEntity<DomainResource> responseEntity = restOperations.exchange(request, new ParameterizedTypeReference<DomainResource>() {});
+        ResponseEntity<DomainResource> responseEntity = execute(createRequest(HttpMethod.GET, getDomainURL(domainId)), domainResourceTypeReference);
         return responseEntity.getBody().getContent();
     }
 
     @Override
     public Domain updateDomain(Domain domain) {
-        RequestEntity<Domain> request = RequestEntity.put(toURI(getDomainURL(domain.getId()))).accept(MediaTypes.HAL_JSON).contentType(MediaType.APPLICATION_JSON).body(domain);
-        ResponseEntity<DomainResource> responseEntity = restOperations.exchange(request, new ParameterizedTypeReference<DomainResource>() {});
+        ResponseEntity<DomainResource> responseEntity = execute(createRequest(HttpMethod.PUT, getDomainURL(domain.getId()), domain), domainResourceTypeReference);
         return responseEntity.getBody().getContent();
     }
 
@@ -59,30 +62,26 @@ public class DefaultIAMClient implements IAMClient {
 
     @Override
     public Set<Domain> getDomains() {
-        RequestEntity<Void> request = RequestEntity.get(toURI(getDomainsBaseURL())).accept(MediaTypes.HAL_JSON).build();
-        ResponseEntity<PagedDomainResources> responseEntity = restOperations.exchange(request, new ParameterizedTypeReference<PagedDomainResources>() {});
+        ResponseEntity<PagedDomainResources> responseEntity = execute(createRequest(HttpMethod.GET, getDomainsBaseURL()), new ParameterizedTypeReference<PagedDomainResources>() {});
         return responseEntity.getBody().getContent().stream().map(r -> r.getContent()).collect(Collectors.toSet());
     }
 
     @Override
     public User createUser(String domainId, User user) {
-        RequestEntity<User> request = RequestEntity.post(toURI(getUsersBaseURL(domainId))).accept(MediaTypes.HAL_JSON).contentType(MediaType.APPLICATION_JSON).body(user);
-        ResponseEntity<UserResource> responseEntity = restOperations.exchange(request, new ParameterizedTypeReference<UserResource>() {});
+        ResponseEntity<UserResource> responseEntity = execute(createRequest(HttpMethod.POST, getUsersBaseURL(domainId), user), userResourceTypeReference);
         return responseEntity.getBody().getContent();
     }
 
 
     @Override
     public User getUser(String domainId, String userId) {
-        RequestEntity<Void> request = RequestEntity.get(toURI(getUserURL(domainId, userId))).accept(MediaTypes.HAL_JSON).build();
-        ResponseEntity<UserResource> responseEntity = restOperations.exchange(request, new ParameterizedTypeReference<UserResource>() {});
+        ResponseEntity<UserResource> responseEntity = execute(createRequest(HttpMethod.GET, getUserURL(domainId, userId)), userResourceTypeReference);
         return responseEntity.getBody().getContent();
     }
 
     @Override
     public User updateUser(String domainId, User user) {
-        RequestEntity<User> request = RequestEntity.put(toURI(getUserURL(domainId, user.getId()))).accept(MediaTypes.HAL_JSON).contentType(MediaType.APPLICATION_JSON).body(user);
-        ResponseEntity<UserResource> responseEntity = restOperations.exchange(request, new ParameterizedTypeReference<UserResource>() {});
+        ResponseEntity<UserResource> responseEntity = execute(createRequest(HttpMethod.PUT, getUserURL(domainId, user.getId()), user), userResourceTypeReference);
         return responseEntity.getBody().getContent();
     }
 
@@ -93,30 +92,26 @@ public class DefaultIAMClient implements IAMClient {
 
     @Override
     public Set<User> getUsers(String domainId) {
-        RequestEntity<Void> request = RequestEntity.get(toURI(getUsersBaseURL(domainId))).accept(MediaTypes.HAL_JSON).build();
-        ResponseEntity<PagedUsersResources> responseEntity = restOperations.exchange(request, new ParameterizedTypeReference<PagedUsersResources>() {});
+        ResponseEntity<PagedUsersResources> responseEntity = execute(createRequest(HttpMethod.GET, getUsersBaseURL(domainId)), new ParameterizedTypeReference<PagedUsersResources>() {});
         return responseEntity.getBody().getContent().stream().map(r -> r.getContent()).collect(Collectors.toSet());
     }
 
     @Override
-    public Role createRole(String domainId, Role roleId) {
-        RequestEntity<Role> request = RequestEntity.post(toURI(getRolesBaseURL(domainId))).accept(MediaTypes.HAL_JSON).contentType(MediaType.APPLICATION_JSON).body(roleId);
-        ResponseEntity<RoleResource> responseEntity = restOperations.exchange(request, new ParameterizedTypeReference<RoleResource>() {});
+    public Role createRole(String domainId, Role role) {
+        ResponseEntity<RoleResource> responseEntity = execute(createRequest(HttpMethod.POST, getRolesBaseURL(domainId), role), roleResourceTypeReference);
         return responseEntity.getBody().getContent();
     }
 
 
     @Override
     public Role getRole(String domainId, String roleId) {
-        RequestEntity<Void> request = RequestEntity.get(toURI(getRoleURL(domainId, roleId))).accept(MediaTypes.HAL_JSON).build();
-        ResponseEntity<RoleResource> responseEntity = restOperations.exchange(request, new ParameterizedTypeReference<RoleResource>() {});
+        ResponseEntity<RoleResource> responseEntity = execute(createRequest(HttpMethod.GET, getRoleURL(domainId, roleId)), roleResourceTypeReference);
         return responseEntity.getBody().getContent();
     }
 
     @Override
-    public Role updateRole(String domainId, Role roleId) {
-        RequestEntity<Role> request = RequestEntity.put(toURI(getRoleURL(domainId, roleId.getId()))).accept(MediaTypes.HAL_JSON).contentType(MediaType.APPLICATION_JSON).body(roleId);
-        ResponseEntity<RoleResource> responseEntity = restOperations.exchange(request, new ParameterizedTypeReference<RoleResource>() {});
+    public Role updateRole(String domainId, Role role) {
+        ResponseEntity<RoleResource> responseEntity = execute(createRequest(HttpMethod.PUT, getRoleURL(domainId, role.getId()), role), roleResourceTypeReference);
         return responseEntity.getBody().getContent();
     }
 
@@ -127,49 +122,42 @@ public class DefaultIAMClient implements IAMClient {
 
     @Override
     public Set<Role> getRoles(String domainId) {
-        RequestEntity<Void> request = RequestEntity.get(toURI(getRolesBaseURL(domainId))).accept(MediaTypes.HAL_JSON).build();
-        ResponseEntity<PagedRolesResources> responseEntity = restOperations.exchange(request, new ParameterizedTypeReference<PagedRolesResources>() {});
+        ResponseEntity<PagedRolesResources> responseEntity = execute(createRequest(HttpMethod.GET, getRolesBaseURL(domainId)), new ParameterizedTypeReference<PagedRolesResources>() {});
         return responseEntity.getBody().getContent().stream().map(r -> r.getContent()).collect(Collectors.toSet());
     }
 
     @Override
-    public Permission createPermission(String domainId, Permission permissionId) {
-        RequestEntity<Permission> request = RequestEntity.post(toURI(getPermissionsBaseURL(domainId))).accept(MediaTypes.HAL_JSON).contentType(MediaType.APPLICATION_JSON).body(permissionId);
-        ResponseEntity<PermissionResource> responseEntity = restOperations.exchange(request, new ParameterizedTypeReference<PermissionResource>() {});
+    public Permission createPermission(String domainId, Permission permission) {
+        ResponseEntity<PermissionResource> responseEntity = execute(createRequest(HttpMethod.POST, getPermissionsBaseURL(domainId), permission), new ParameterizedTypeReference<PermissionResource>() {});
         return responseEntity.getBody().getContent();
     }
 
     @Override
     public Permission getPermission(String domainId, String permissionId) {
-        RequestEntity<Void> request = RequestEntity.get(toURI(getPermissionURL(domainId, permissionId))).accept(MediaTypes.HAL_JSON).build();
-        ResponseEntity<PermissionResource> responseEntity = restOperations.exchange(request, new ParameterizedTypeReference<PermissionResource>() {});
+        ResponseEntity<PermissionResource> responseEntity = execute(createRequest(HttpMethod.GET, getPermissionURL(domainId, permissionId)), new ParameterizedTypeReference<PermissionResource>() {});
         return responseEntity.getBody().getContent();
     }
 
     @Override
     public Permission updatePermission(String domainId, Permission permissionId) {
-        RequestEntity<Permission> request = RequestEntity.put(toURI(getPermissionURL(domainId, permissionId.getId()))).accept(MediaTypes.HAL_JSON).contentType(MediaType.APPLICATION_JSON).body(permissionId);
-        ResponseEntity<PermissionResource> responseEntity = restOperations.exchange(request, new ParameterizedTypeReference<PermissionResource>() {});
+        ResponseEntity<PermissionResource> responseEntity = execute(createRequest(HttpMethod.PUT, getPermissionURL(domainId, permissionId.getId()), permissionId), new ParameterizedTypeReference<PermissionResource>() {});
         return responseEntity.getBody().getContent();
     }
 
     @Override
     public Set<Permission> getPermissions(String domainId) {
-        RequestEntity<Void> request = RequestEntity.get(toURI(getPermissionsBaseURL(domainId))).accept(MediaTypes.HAL_JSON).build();
-        ResponseEntity<PagedPermissionsResources> responseEntity = restOperations.exchange(request, new ParameterizedTypeReference<PagedPermissionsResources>() {});
+        ResponseEntity<PagedPermissionsResources> responseEntity = execute(createRequest(HttpMethod.GET, getPermissionsBaseURL(domainId)), new ParameterizedTypeReference<PagedPermissionsResources>() {});
         return responseEntity.getBody().getContent().stream().map(r -> r.getContent()).collect(Collectors.toSet());
     }
 
     @Override
     public void addPermissionsForRole(String domainId, String roleId, Set<String> permissionIds) {
-        RequestEntity<Set<String>> request = RequestEntity.post(toURI(getRolePermissionsURL(domainId, roleId))).contentType(MediaType.APPLICATION_JSON).body(permissionIds);
-        restOperations.exchange(request, Void.class);
+        execute(createRequest(HttpMethod.POST, getRolePermissionsURL(domainId, roleId), permissionIds));
     }
 
     @Override
     public void setPermissionsForRole(String domainId, String roleId, Set<String> permissionIds) {
-        RequestEntity<Set<String>> request = RequestEntity.put(toURI(getRolePermissionsURL(domainId, roleId))).contentType(MediaType.APPLICATION_JSON).body(permissionIds);
-        restOperations.exchange(request, Void.class);
+        execute(createRequest(HttpMethod.PUT, getRolePermissionsURL(domainId, roleId), permissionIds));
     }
 
     @Override
@@ -179,14 +167,36 @@ public class DefaultIAMClient implements IAMClient {
 
     @Override
     public Set<Permission> getPermissionsForRole(String domainId, String roleId) {
-        RequestEntity<Void> request = RequestEntity.get(toURI(getRolePermissionsURL(domainId, roleId))).accept(MediaTypes.HAL_JSON).build();
-        ResponseEntity<PermissionResources> responseEntity = restOperations.exchange(request, new ParameterizedTypeReference<PermissionResources>() {});
+        ResponseEntity<PermissionResources> responseEntity = execute(createRequest(HttpMethod.GET, getRolePermissionsURL(domainId, roleId)), new ParameterizedTypeReference<PermissionResources>() {});
         return new HashSet(responseEntity.getBody().getContent());
     }
 
     @Override
     public void deletePermission(String domainId, String permissionId) {
         restOperations.delete(getPermissionURL(domainId, permissionId));
+    }
+
+    private RequestEntity<Void> createRequest(HttpMethod httpMethod, String uri) {
+        return createRequest(httpMethod, uri, null);
+    }
+
+    private <T> RequestEntity<T> createRequest(HttpMethod httpMethod, String uri, T body) {
+        RequestEntity.BodyBuilder builder = RequestEntity.method(httpMethod, toURI(uri));
+        if(body != null) {
+            builder.contentType(MediaType.APPLICATION_JSON);
+        }
+        if(!httpMethod.equals(HttpMethod.DELETE)) {
+            builder.accept(MediaTypes.HAL_JSON);
+        }
+        return builder.body(body);
+    }
+
+    private <T> ResponseEntity<T> execute(RequestEntity<?> requestEntity, ParameterizedTypeReference<T> responseType) {
+        return restOperations.exchange(requestEntity, responseType);
+    }
+
+    private <T> ResponseEntity<Void> execute(RequestEntity<?> requestEntity) {
+        return execute(requestEntity, new ParameterizedTypeReference<Void>() {});
     }
 
     private String getDomainsBaseURL() {
