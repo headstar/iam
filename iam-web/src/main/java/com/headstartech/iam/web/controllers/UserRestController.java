@@ -25,7 +25,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.util.Set;
 
 @RestController
-@RequestMapping(value = "/domains/{domainId}/users")
+@RequestMapping(value = "/api/domains/{domainId}/users")
 public class UserRestController {
 
     private final UserService userService;

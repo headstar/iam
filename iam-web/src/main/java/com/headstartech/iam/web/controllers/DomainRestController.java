@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
-@RequestMapping(value = "/domains")
+@RequestMapping(value = "/api/domains")
 public class DomainRestController {
 
     private final DomainService domainService;

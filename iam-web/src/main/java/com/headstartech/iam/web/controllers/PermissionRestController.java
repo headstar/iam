@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
-@RequestMapping(value = "/domains/{domainId}/permissions")
+@RequestMapping(value = "/api/domains/{domainId}/permissions")
 public class PermissionRestController {
 
     private final PermissionService permissionService;

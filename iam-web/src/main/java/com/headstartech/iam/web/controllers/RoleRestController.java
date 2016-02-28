@@ -24,7 +24,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.util.Set;
 
 @RestController
-@RequestMapping(value = "/domains/{domainId}/roles")
+@RequestMapping(value = "/api/domains/{domainId}/roles")
 public class RoleRestController {
 
     private final RoleService roleService;
