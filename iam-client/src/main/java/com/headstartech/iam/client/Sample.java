@@ -25,7 +25,7 @@ public class Sample {
 
     public static void main(String[] args) throws IAMException, IOException {
         HttpHost targetHost = new HttpHost("localhost", 8080, "http");
-        ClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactoryBasicAuth(targetHost);
+        ClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactoryBasicAuth(targetHost, "user", "user");
         RestTemplate restTemplate = new RestTemplate(requestFactory);
 
         List<HttpMessageConverter<?>> converters = new ArrayList<>();

@@ -21,11 +21,11 @@ public class HttpComponentsClientHttpRequestFactoryBasicAuth extends HttpCompone
     final CredentialsProvider credsProvider;
     final AuthCache authCache;
 
-    public HttpComponentsClientHttpRequestFactoryBasicAuth(HttpHost host) {
+    public HttpComponentsClientHttpRequestFactoryBasicAuth(HttpHost host, String userName, String password) {
         super();
         this.host = host;
         credsProvider = new BasicCredentialsProvider();
-        credsProvider.setCredentials(new AuthScope(host.getHostName(), host.getPort()), new UsernamePasswordCredentials("user", "user"));
+        credsProvider.setCredentials(new AuthScope(host.getHostName(), host.getPort()), new UsernamePasswordCredentials(userName, password));
         authCache = new BasicAuthCache();
         authCache.put(host, new BasicScheme());
 
