@@ -18,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -28,12 +29,14 @@ public class JpaUserService implements UserService {
     private final JpaDomainRepository domainRepo;
     private final JpaUserRepository userRepo;
     private final JpaRoleRepository roleRepo;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public JpaUserService(JpaDomainRepository domainRepo, JpaUserRepository userRepo, JpaRoleRepository roleRepo) {
+    public JpaUserService(JpaDomainRepository domainRepo, JpaUserRepository userRepo, JpaRoleRepository roleRepo, PasswordEncoder passwordEncoder) {
         this.domainRepo = domainRepo;
         this.userRepo = userRepo;
         this.roleRepo = roleRepo;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -43,7 +46,7 @@ public class JpaUserService implements UserService {
         final UserEntity userEntity = new UserEntity();
         userEntity.setId(StringUtils.isBlank(user.getId()) ? RandomString.randomId() : user.getId());
         userEntity.setUserName(user.getUserName());
-        userEntity.setPassword(user.getPassword());
+        userEntity.setPassword(passwordEncoder.encode(user.getPassword()));
         userEntity.setDomain(domainEntity);
         userEntity.setAttributes(user.getAttributes());
         return userRepo.save(userEntity).getId();
