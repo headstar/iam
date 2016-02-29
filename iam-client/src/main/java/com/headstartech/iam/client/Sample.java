@@ -7,11 +7,13 @@ import com.headstartech.iam.common.dto.Permission;
 import com.headstartech.iam.common.dto.Role;
 import com.headstartech.iam.common.dto.User;
 import com.headstartech.iam.common.exceptions.IAMException;
+import org.apache.http.HttpHost;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.core.AnnotationRelProvider;
 import org.springframework.hateoas.core.DefaultRelProvider;
 import org.springframework.hateoas.hal.Jackson2HalModule;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
@@ -22,13 +24,16 @@ import java.util.*;
 public class Sample {
 
     public static void main(String[] args) throws IAMException, IOException {
-        RestTemplate restOperations = new RestTemplate();
+        HttpHost targetHost = new HttpHost("localhost", 8080, "http");
+        ClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactoryBasicAuth(targetHost);
+        RestTemplate restTemplate = new RestTemplate(requestFactory);
+
         List<HttpMessageConverter<?>> converters = new ArrayList<>();
         converters.add(jsonConverter());
         converters.add(halConverter());
-        restOperations.setMessageConverters(converters);
+        restTemplate.setMessageConverters(converters);
 
-        IAMClient iamClient = new DefaultIAMClient(restOperations, "http://localhost:8080");
+        IAMClient iamClient = new DefaultIAMClient(restTemplate, "http://localhost:8080/api");
 
         Set<Domain> domains = iamClient.getDomains();
 
