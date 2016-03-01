@@ -6,7 +6,7 @@ import org.hibernate.validator.constraints.Length;
 import javax.persistence.*;
 import java.util.Set;
 
-@Entity
+@Entity(name = "Permission")
 @Table(name = "permission")
 public class PermissionEntity extends BaseEntity {
 

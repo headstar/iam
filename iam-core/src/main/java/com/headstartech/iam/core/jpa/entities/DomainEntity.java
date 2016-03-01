@@ -7,7 +7,7 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
-@Entity
+@Entity(name = "Domain")
 @Table(name = "domain")
 public class DomainEntity extends BaseEntity {
 

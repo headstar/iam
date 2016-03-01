@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-@Entity
+@Entity(name = "User")
 @Table(name = "user")
 public class UserEntity extends BaseEntity {
 

@@ -117,17 +117,11 @@ public class JpaDomainService implements DomainService {
     }
 
     private UserEntity findUserByUserName(final String domainId, final String userName) throws IAMException {
-        // TODO: might return more than 1 user
-        final UserEntity userEntity = userRepo.findByUserName(userName);
-        if (userEntity!= null) {
-            if(!userEntity.getDomain().getId().equals(domainId)) {
-                throw new IAMNotFoundException("No user with userName " + userName + " exists.");
-            }
-
-            return userEntity;
-        } else {
+        final UserEntity userEntity = userRepo.findByDomainAndUserName(domainId, userName);
+        if (userEntity == null) {
             throw new IAMNotFoundException("No user with userName " + userName + " exists.");
         }
+        return userEntity;
     }
 
 }

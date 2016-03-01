@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface JpaUserRepository extends JpaRepository<UserEntity, String>, JpaSpecificationExecutor {
 
-    UserEntity findByUserName(String userName);
+    @Query("SELECT u FROM User u, Domain d WHERE u.domain = d AND d.id = :domainId and u.userName = :userName")
+    UserEntity findByDomainAndUserName(@Param("domainId") String domainId, @Param("userName") String userName);
 }
 
