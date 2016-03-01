@@ -7,7 +7,7 @@ import javax.validation.constraints.Size;
 @Relation(collectionRelation = "domains")
 public class Domain extends BaseDTO {
 
-    @Size(max = 255, message = "Max length is 255 characters")
+    @Size(max = 255)
     private String description;
 
     public String getDescription() {

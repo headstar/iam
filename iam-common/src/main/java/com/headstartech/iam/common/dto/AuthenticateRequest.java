@@ -1,8 +1,12 @@
 package com.headstartech.iam.common.dto;
 
+import org.hibernate.validator.constraints.NotBlank;
+
 public class AuthenticateRequest {
 
+    @NotBlank
     private String userName;
+    @NotBlank
     private String password;
 
     public String getUserName() {

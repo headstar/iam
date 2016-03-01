@@ -2,9 +2,14 @@ package com.headstartech.iam.common.dto;
 
 import org.springframework.hateoas.core.Relation;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 @Relation(collectionRelation = "roles")
 public class Role extends BaseDTO {
 
+    @NotNull
+    @Size(min = 1, max = 255)
     private String name;
 
     public String getName() {
