@@ -52,9 +52,9 @@ public class JpaPermissionService implements PermissionService {
     }
 
     @Override
-    public void updatePermission(String domainId, String userId, Permission permission) throws IAMException {
-        PermissionEntity permissionEntity = findPermission(domainId, userId);
-        if (!userId.equals(permission.getId())) {
+    public void updatePermission(String domainId, String permissionId, Permission permission) throws IAMException {
+        PermissionEntity permissionEntity = findPermission(domainId, permissionId);
+        if (!permissionId.equals(permission.getId())) {
             throw new IAMBadRequestException("Permission id inconsistent with id passed in.");
         }
 
