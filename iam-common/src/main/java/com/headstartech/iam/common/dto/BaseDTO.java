@@ -1,5 +1,8 @@
 package com.headstartech.iam.common.dto;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import javax.validation.constraints.Size;
 
 public class BaseDTO {
@@ -14,4 +17,15 @@ public class BaseDTO {
     public void setId(String id) {
         this.id = id;
     }
+
+    @Override
+    public String toString() {
+        try {
+            final ObjectMapper mapper = new ObjectMapper();
+            return mapper.writeValueAsString(this);
+        } catch (final JsonProcessingException ioe) {
+            return ioe.getLocalizedMessage();
+        }
+    }
+
 }
