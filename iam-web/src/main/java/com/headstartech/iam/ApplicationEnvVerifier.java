@@ -1,4 +1,4 @@
-package com.headstartech.iam.web;
+package com.headstartech.iam;
 
 import com.headstartech.iam.core.annotations.Dev;
 import com.headstartech.iam.core.annotations.Prod;
@@ -11,7 +11,6 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.core.env.Environment;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -36,7 +35,7 @@ public class ApplicationEnvVerifier implements ApplicationListener {
             }).collect(Collectors.toSet());
 
             if(res.isEmpty() ||res.size() > 1) {
-                logger.error("Exactly one of {}, {}, {} profiles must be set as active!", Dev.name, QA.name, Prod.name);
+                logger.error("Exactly one of {}, {}, {} profiles must be set as active! (spring.profiles.active)", Dev.name, QA.name, Prod.name);
                 System.exit(1);
             }
         }
