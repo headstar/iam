@@ -27,12 +27,7 @@ public class ApplicationEnvVerifier implements ApplicationListener {
         if (applicationEvent instanceof ApplicationEnvironmentPreparedEvent) {
             ApplicationEnvironmentPreparedEvent event = (ApplicationEnvironmentPreparedEvent) applicationEvent;
             Environment env = event.getEnvironment();
-            Set<String> res = Arrays.stream(env.getActiveProfiles()).filter(new Predicate<String>() {
-                @Override
-                public boolean test(String s) {
-                    return Dev.name.equals(s) || QA.name.equals(s) || Prod.name.equals(s);
-                }
-            }).collect(Collectors.toSet());
+            Set<String> res = Arrays.stream(env.getActiveProfiles()).filter(s -> Dev.name.equals(s) || QA.name.equals(s) || Prod.name.equals(s)).collect(Collectors.toSet());
 
             if(res.isEmpty() ||res.size() > 1) {
                 logger.error("Exactly one of {}, {}, {} profiles must be set as active! (spring.profiles.active)", Dev.name, QA.name, Prod.name);
