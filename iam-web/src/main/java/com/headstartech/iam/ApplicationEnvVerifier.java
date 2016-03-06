@@ -18,21 +18,17 @@ import java.util.stream.Collectors;
 /**
  *
  */
-public class ApplicationEnvVerifier implements ApplicationListener {
+public class ApplicationEnvVerifier implements ApplicationListener<ApplicationEnvironmentPreparedEvent> {
 
     private static final Logger logger = LoggerFactory.getLogger(ApplicationEnvVerifier.class);
 
     @Override
-    public void onApplicationEvent(ApplicationEvent applicationEvent) {
-        if (applicationEvent instanceof ApplicationEnvironmentPreparedEvent) {
-            ApplicationEnvironmentPreparedEvent event = (ApplicationEnvironmentPreparedEvent) applicationEvent;
-            Environment env = event.getEnvironment();
-            Set<String> res = Arrays.stream(env.getActiveProfiles()).filter(s -> Dev.name.equals(s) || QA.name.equals(s) || Prod.name.equals(s)).collect(Collectors.toSet());
-
-            if(res.isEmpty() ||res.size() > 1) {
-                logger.error("Exactly one of {}, {}, {} profiles must be set as active! (spring.profiles.active)", Dev.name, QA.name, Prod.name);
-                System.exit(1);
-            }
+    public void onApplicationEvent(ApplicationEnvironmentPreparedEvent applicationEvent) {
+        Environment env = applicationEvent.getEnvironment();
+        Set<String> res = Arrays.stream(env.getActiveProfiles()).filter(s -> Dev.name.equals(s) || QA.name.equals(s) || Prod.name.equals(s)).collect(Collectors.toSet());
+        if(res.isEmpty() ||res.size() > 1) {
+            logger.error("Exactly one of {}, {}, {} profiles must be set as active! (spring.profiles.active)", Dev.name, QA.name, Prod.name);
+            System.exit(1);
         }
     }
 
