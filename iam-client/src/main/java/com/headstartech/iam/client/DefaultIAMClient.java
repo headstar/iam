@@ -27,6 +27,7 @@ public class DefaultIAMClient implements IAMClient {
     private static final ParameterizedTypeReference<DomainResource> domainResourceTypeReference = new ParameterizedTypeReference<DomainResource>() {};
     private static final ParameterizedTypeReference<UserResource> userResourceTypeReference = new ParameterizedTypeReference<UserResource>() {};
     private static final ParameterizedTypeReference<RoleResource> roleResourceTypeReference = new ParameterizedTypeReference<RoleResource>() {};
+    private static final ParameterizedTypeReference<PermissionResource> permissionResourceTypeReference = new ParameterizedTypeReference<PermissionResource>() {};
 
     private final RestOperations restOperations;
     private final String baseRestURL;
@@ -128,19 +129,19 @@ public class DefaultIAMClient implements IAMClient {
 
     @Override
     public Permission createPermission(String domainId, Permission permission) {
-        ResponseEntity<PermissionResource> responseEntity = execute(createRequest(HttpMethod.POST, getPermissionsBaseURL(domainId), permission), new ParameterizedTypeReference<PermissionResource>() {});
+        ResponseEntity<PermissionResource> responseEntity = execute(createRequest(HttpMethod.POST, getPermissionsBaseURL(domainId), permission), permissionResourceTypeReference);
         return responseEntity.getBody().getContent();
     }
 
     @Override
     public Permission getPermission(String domainId, String permissionId) {
-        ResponseEntity<PermissionResource> responseEntity = execute(createRequest(HttpMethod.GET, getPermissionURL(domainId, permissionId)), new ParameterizedTypeReference<PermissionResource>() {});
+        ResponseEntity<PermissionResource> responseEntity = execute(createRequest(HttpMethod.GET, getPermissionURL(domainId, permissionId)), permissionResourceTypeReference);
         return responseEntity.getBody().getContent();
     }
 
     @Override
     public Permission updatePermission(String domainId, Permission permissionId) {
-        ResponseEntity<PermissionResource> responseEntity = execute(createRequest(HttpMethod.PUT, getPermissionURL(domainId, permissionId.getId()), permissionId), new ParameterizedTypeReference<PermissionResource>() {});
+        ResponseEntity<PermissionResource> responseEntity = execute(createRequest(HttpMethod.PUT, getPermissionURL(domainId, permissionId.getId()), permissionId), permissionResourceTypeReference);
         return responseEntity.getBody().getContent();
     }
 
