@@ -23,6 +23,7 @@ allprojects {
 subprojects {
     apply plugin: 'java'
     apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'findbugs'
 
     dependencyManagement {
         imports {
@@ -44,6 +45,17 @@ subprojects {
             java {
                 srcDir generatedSourcesJavaDir
             }
+        }
+    }
+
+    findbugs {
+        excludeFilter = new File(project.parent.projectDir, "codequality/findbugs/excludeFilter.xml")
+    }
+
+    tasks.withType(FindBugs) {
+        reports {
+            xml.enabled = false
+            html.enabled = true
         }
     }
 }

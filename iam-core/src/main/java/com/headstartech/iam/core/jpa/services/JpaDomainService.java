@@ -89,7 +89,7 @@ public class JpaDomainService implements DomainService {
 
     @Override
     public AuthenticateResponse authenticateUser(String domainId, AuthenticateRequest authenticateRequest) throws IAMException {
-        DomainEntity domainEntity = findDomain(domainId);
+        findDomain(domainId);
         UserEntity userEntity = findUserByUserName(domainId, authenticateRequest.getUserName());
         AuthenticateResponse response = new AuthenticateResponse();
         response.setPermissions(new HashSet<>());

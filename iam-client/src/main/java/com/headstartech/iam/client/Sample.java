@@ -35,7 +35,7 @@ public class Sample {
 
         IAMClient iamClient = new DefaultIAMClient(restTemplate, "http://localhost:8080/api");
 
-        Set<Domain> domains = iamClient.getDomains();
+        iamClient.getDomains();
 
         Domain d = new Domain();
         d.setDescription("A super domain!");
@@ -44,15 +44,15 @@ public class Sample {
         User u = new User();
         u.setUserName("u1");
         u.setPassword("secret");
-        u = iamClient.createUser(d.getId(), u);
+        iamClient.createUser(d.getId(), u);
 
-        Set<User> users = iamClient.getUsers(d.getId());
+        iamClient.getUsers(d.getId());
 
         Role r = new Role();
         r.setName("ADMIN");
         r = iamClient.createRole(d.getId(), r);
 
-        Set<Role> roles = iamClient.getRoles(d.getId());
+        iamClient.getRoles(d.getId());
 
         Permission p1 = new Permission();
         p1.setName("READ");
@@ -62,14 +62,14 @@ public class Sample {
         p2.setName("WRITE");
         p2 = iamClient.createPermission(d.getId(), p2);
 
-        Set<Permission> permissions = iamClient.getPermissions(d.getId());
+        iamClient.getPermissions(d.getId());
 
         Set<String> ps = new HashSet<>();
         ps.add(p1.getId());
         ps.add(p2.getId());
         iamClient.setPermissionsForRole(d.getId(), r.getId(), ps);
 
-        Set<Permission> psRead = iamClient.getPermissionsForRole(d.getId(), r.getId());
+        iamClient.getPermissionsForRole(d.getId(), r.getId());
 
     }
     private static MappingJackson2HttpMessageConverter jsonConverter() {
