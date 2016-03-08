@@ -11,6 +11,11 @@ buildscript {
         classpath("io.spring.gradle:dependency-management-plugin:0.5.3.RELEASE")
     }
 }
+
+plugins {
+    id 'net.saliman.cobertura' version '2.2.8'
+}
+
 task wrapper(type: Wrapper) {
     gradleVersion = '2.11'
 }
@@ -24,6 +29,7 @@ subprojects {
     apply plugin: 'java'
     apply plugin: 'io.spring.dependency-management'
     apply plugin: 'findbugs'
+    apply plugin: 'cobertura'
 
     dependencyManagement {
         imports {
@@ -67,3 +73,22 @@ idea {
         vcs = 'Git'
     }
 }
+
+// configuring cobertura to merge results of subprojects
+
+def childTestTasks = []
+def coverageDatafiles = []
+def testSourceDirs = []
+subprojects.each {
+    coverageDatafiles << it.file("build/cobertura/cobertura.ser")
+    childTestTasks << "${it.name}:test"
+    testSourceDirs << it.file("src/main/java").path
+}
+
+cobertura {
+    coverageMergeDatafiles = coverageDatafiles
+    coverageSourceDirs  = testSourceDirs
+}
+
+// make sure this test task is run last
+test.dependsOn(childTestTasks)
