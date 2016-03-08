@@ -67,7 +67,7 @@ public class PermissionRestController {
     }
 
     @RequestMapping(value = "/{permissionId}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.OK)
     public PermissionResource updatePermission(@PathVariable("domainId") final String domainId, @PathVariable("permissionId") final String permissionId, @RequestBody final Permission permission)
             throws IAMException {
         permissionService.updatePermission(domainId, permissionId, permission);

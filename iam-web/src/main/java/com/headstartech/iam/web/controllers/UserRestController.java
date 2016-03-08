@@ -70,7 +70,7 @@ public class UserRestController {
     }
 
     @RequestMapping(value = "/{userId}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.OK)
     public UserResource updateUser(@PathVariable("domainId") final String domainId, @PathVariable("userId") final String userId, @RequestBody final User user)
      throws IAMException {
         userService.updateUser(domainId, userId, user);

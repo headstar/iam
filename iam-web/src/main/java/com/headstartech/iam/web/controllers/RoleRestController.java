@@ -69,7 +69,7 @@ public class RoleRestController {
     }
 
     @RequestMapping(value = "/{roleId}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.OK)
     public RoleResource updateRole(@PathVariable("domainId") final String domainId, @PathVariable("roleId") final String roleId, @RequestBody final Role role)
      throws IAMException {
         roleService.updateRole(domainId, roleId, role);
