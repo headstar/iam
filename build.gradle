@@ -59,9 +59,9 @@ subprojects {
         sourceSets sourceSets.main
 
         reports {
-            xml.enabled true
             html.destination "${reporting.baseDir}/jacoco/unitTests"
             csv.enabled false
+            xml.enabled false
         }
     }
 
