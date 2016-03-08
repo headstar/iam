@@ -78,7 +78,7 @@ public class UserEntity extends BaseEntity {
         User user = new User();
         user.setId(getId());
         user.setUserName(getUserName());
-        user.setPassword(getPassword());
+        user.setPassword(null);  // never return the (encrypted) password
         user.setAttributes(getAttributes());
         return user;
     }

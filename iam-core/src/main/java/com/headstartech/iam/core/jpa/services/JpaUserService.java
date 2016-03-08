@@ -72,7 +72,9 @@ public class JpaUserService implements UserService {
         }
 
         userEntity.setUserName(user.getUserName());
-        userEntity.setPassword(user.getPassword());
+        if(user.getPassword() != null) {
+            userEntity.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
         userEntity.setAttributes(user.getAttributes());
         userRepo.save(userEntity);
     }
