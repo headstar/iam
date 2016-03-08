@@ -17,24 +17,24 @@ task wrapper(type: Wrapper) {
 }
 
 allprojects {
+    repositories {
+        mavenCentral()
+    }
+
     apply plugin: 'idea'
     apply plugin: 'eclipse'
+    apply plugin: 'jacoco'
 }
 
 subprojects {
     apply plugin: 'java'
     apply plugin: 'io.spring.dependency-management'
     apply plugin: 'findbugs'
-    apply plugin: 'jacoco'
 
     dependencyManagement {
         imports {
             mavenBom 'io.spring.platform:platform-bom:2.0.2.RELEASE'
         }
-    }
-
-    repositories {
-        mavenCentral()
     }
 
     ext {
@@ -87,4 +87,29 @@ idea {
         languageLevel = '1.8'
         vcs = 'Git'
     }
+}
+
+// http://csiebler.github.io/blog/2014/02/09/multi-project-code-coverage-using-gradle-and-jacoco/
+task codeCoverageReport(type: JacocoReport) {
+
+    // Gather execution data from all subprojects
+    // (change this if you e.g. want to calculate unit test/integration test coverage separately)
+    executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
+
+    // Add all relevant sourcesets from the subprojects
+    subprojects.each {
+        sourceSets it.sourceSets.main
+    }
+
+    reports {
+        xml.enabled false
+        html.enabled true
+        html.destination "${buildDir}/reports/jacoco"
+        csv.enabled false
+    }
+}
+
+// always run the tests before generating the report
+codeCoverageReport.dependsOn {
+    subprojects*.test
 }
