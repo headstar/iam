@@ -12,10 +12,6 @@ buildscript {
     }
 }
 
-plugins {
-    id 'net.saliman.cobertura' version '2.2.8'
-}
-
 task wrapper(type: Wrapper) {
     gradleVersion = '2.11'
 }
@@ -29,7 +25,7 @@ subprojects {
     apply plugin: 'java'
     apply plugin: 'io.spring.dependency-management'
     apply plugin: 'findbugs'
-    apply plugin: 'cobertura'
+    apply plugin: 'jacoco'
 
     dependencyManagement {
         imports {
@@ -54,6 +50,25 @@ subprojects {
         }
     }
 
+    // See: http://csiebler.github.io/blog/2014/02/09/multi-project-code-coverage-using-gradle-and-jacoco/
+    task unitTestCoverage(type: JacocoReport) {
+        // (change this if you e.g. want to calculate unit test/integration test coverage separately)
+        executionData file("build/jacoco/test.exec")
+
+        // Add all relevant sourcesets from the subprojects
+        sourceSets sourceSets.main
+
+        reports {
+            xml.enabled true
+            html.destination "${reporting.baseDir}/jacoco/unitTests"
+            csv.enabled false
+        }
+    }
+
+    // always run the tests before generating the report
+    unitTestCoverage.dependsOn test
+    check.dependsOn unitTestCoverage
+
     findbugs {
         excludeFilter = new File(project.parent.projectDir, "codequality/findbugs/excludeFilter.xml")
     }
@@ -73,22 +88,3 @@ idea {
         vcs = 'Git'
     }
 }
-
-// configuring cobertura to merge results of subprojects
-
-def childTestTasks = []
-def coverageDatafiles = []
-def testSourceDirs = []
-subprojects.each {
-    coverageDatafiles << it.file("build/cobertura/cobertura.ser")
-    childTestTasks << "${it.name}:test"
-    testSourceDirs << it.file("src/main/java").path
-}
-
-cobertura {
-    coverageMergeDatafiles = coverageDatafiles
-    coverageSourceDirs  = testSourceDirs
-}
-
-// make sure this test task is run last
-test.dependsOn(childTestTasks)
