@@ -11,6 +11,7 @@ dependencies {
 
     runtime("mysql:mysql-connector-java")
 
+    testCompile 'com.jayway.restassured:rest-assured:2.9.0'
     testCompile("org.springframework.boot:spring-boot-starter-test")
     testCompile "com.h2database:h2:1.4.190"
 }
