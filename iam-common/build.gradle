@@ -1,5 +1,6 @@
 dependencies {
     compile("org.hibernate:hibernate-validator")
-    compile("org.springframework.boot:spring-boot-starter-hateoas")
+    compile("org.springframework.hateoas:spring-hateoas")
+    compile("com.fasterxml.jackson.core:jackson-databind")
 
 }
