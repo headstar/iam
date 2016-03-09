@@ -14,3 +14,9 @@ dependencies {
     testCompile("org.springframework.boot:spring-boot-starter-test")
     testCompile "com.h2database:h2:1.4.190"
 }
+
+def env = project.hasProperty("env") ? project.getProperty("env") : "dev"
+
+bootRun {
+    systemProperty 'spring.profiles.active', env
+}
