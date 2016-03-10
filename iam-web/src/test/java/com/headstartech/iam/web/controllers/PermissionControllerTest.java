@@ -3,11 +3,14 @@ package com.headstartech.iam.web.controllers;
 import com.headstartech.iam.common.dto.Domain;
 import com.headstartech.iam.common.dto.Permission;
 import com.headstartech.iam.core.jpa.repositories.JpaPermissionRepository;
+import com.headstartech.iam.web.hateoas.resources.DomainResource;
+import com.headstartech.iam.web.hateoas.resources.PermissionResource;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.MediaTypes;
+import org.springframework.hateoas.PagedResources;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -79,7 +82,7 @@ public class PermissionControllerTest extends ControllerTestBase {
 
     @Test
     public void canGetExisting() {
-        Permission user = createPermission(UUID.randomUUID().toString());
+        Permission user = createPermission();
 
         Permission response = given()
                 .accept(MediaTypes.HAL_JSON_VALUE)
@@ -93,7 +96,7 @@ public class PermissionControllerTest extends ControllerTestBase {
 
     @Test
     public void canUpdateExisting() {
-        Permission user = createPermission(UUID.randomUUID().toString());
+        Permission user = createPermission();
 
         user.setName(UUID.randomUUID().toString());
 
@@ -111,7 +114,7 @@ public class PermissionControllerTest extends ControllerTestBase {
 
     @Test
     public void canDeleteExisting() {
-        Permission user = createPermission(UUID.randomUUID().toString());
+        Permission user = createPermission();
 
         given()
                 .delete("/api/domains/{domainId}/permissions/{permissionId}", domain.getId(), user.getId())
@@ -121,9 +124,33 @@ public class PermissionControllerTest extends ControllerTestBase {
         assertFalse(jpaPermissionRepository.exists(user.getId()));
     }
 
-    private Permission createPermission(String id) {
+    @Test
+    public void getPage() {
+        // create a few permissions to be sure get have more than 1 page
+        createPermission();
+        createPermission();
+        createPermission();
+
+        PagedPermissionResources response = given()
+                .accept(MediaTypes.HAL_JSON_VALUE)
+                .get("/api/domains/{domainId}/permissions?size=2", domain.getId())
+                .then()
+                .statusCode(200).extract().as(PagedPermissionResources.class);
+
+        response.getContent().stream().forEach(r -> assertNotNull(r.getContent().getId()));
+        assertEquals(0, response.getMetadata().getNumber());
+        assertEquals(2, response.getMetadata().getSize());
+        assertTrue(response.getMetadata().getTotalElements() >= 3);
+        assertEquals(2, response.getContent().size());
+    }
+
+    static class PagedPermissionResources extends PagedResources<PermissionResource> {
+
+    }
+
+    private Permission createPermission() {
         Permission request = new Permission();
-        request.setId(id);
+        request.setId(UUID.randomUUID().toString());
         request.setName(UUID.randomUUID().toString());
 
         Permission response = given()

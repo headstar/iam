@@ -3,11 +3,14 @@ package com.headstartech.iam.web.controllers;
 import com.headstartech.iam.common.dto.Domain;
 import com.headstartech.iam.common.dto.User;
 import com.headstartech.iam.core.jpa.repositories.JpaUserRepository;
+import com.headstartech.iam.web.hateoas.resources.RoleResource;
+import com.headstartech.iam.web.hateoas.resources.UserResource;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.MediaTypes;
+import org.springframework.hateoas.PagedResources;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -89,7 +92,7 @@ public class UserControllerTest extends ControllerTestBase {
 
     @Test
     public void canGetExisting() {
-        User user = createUser(UUID.randomUUID().toString());
+        User user = createUser();
 
         User response = given()
                 .accept(MediaTypes.HAL_JSON_VALUE)
@@ -103,7 +106,7 @@ public class UserControllerTest extends ControllerTestBase {
 
     @Test
     public void canUpdateExisting() {
-        User user = createUser(UUID.randomUUID().toString());
+        User user = createUser();
 
         user.getAttributes().put(UUID.randomUUID().toString(), "a");
 
@@ -121,7 +124,7 @@ public class UserControllerTest extends ControllerTestBase {
 
     @Test
     public void canDeleteExisting() {
-        User user = createUser(UUID.randomUUID().toString());
+        User user = createUser();
 
         given()
                 .delete("/api/domains/{domainId}/users/{userId}", domain.getId(), user.getId())
@@ -131,9 +134,33 @@ public class UserControllerTest extends ControllerTestBase {
         assertFalse(jpaUserRepository.exists(user.getId()));
     }
 
-    private User createUser(String id) {
+    @Test
+    public void getPage() {
+        // create a few users to be sure get have more than 1 page
+        createUser();
+        createUser();
+        createUser();
+
+        PagedUserResources response = given()
+                .accept(MediaTypes.HAL_JSON_VALUE)
+                .get("/api/domains/{domainId}/users?size=2", domain.getId())
+                .then()
+                .statusCode(200).extract().as(PagedUserResources.class);
+
+        response.getContent().stream().forEach(r -> assertNotNull(r.getContent().getId()));
+        assertEquals(0, response.getMetadata().getNumber());
+        assertEquals(2, response.getMetadata().getSize());
+        assertTrue(response.getMetadata().getTotalElements() >= 3);
+        assertEquals(2, response.getContent().size());
+    }
+
+    static class PagedUserResources extends PagedResources<UserResource> {
+
+    }
+
+    private User createUser() {
         User request = new User();
-        request.setId(id);
+        request.setId(UUID.randomUUID().toString());
         request.setUserName(UUID.randomUUID().toString());
         request.setPassword("aSecret");
         request.setAttributes(new HashMap<>());

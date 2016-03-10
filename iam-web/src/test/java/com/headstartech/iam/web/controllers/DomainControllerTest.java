@@ -2,10 +2,12 @@ package com.headstartech.iam.web.controllers;
 
 import com.headstartech.iam.common.dto.Domain;
 import com.headstartech.iam.core.jpa.repositories.JpaDomainRepository;
+import com.headstartech.iam.web.hateoas.resources.DomainResource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.MediaTypes;
+import org.springframework.hateoas.PagedResources;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -110,5 +112,29 @@ public class DomainControllerTest extends ControllerTestBase {
                 .statusCode(204).extract();
 
         assertFalse(jpaDomainRepository.exists(domain.getId()));
+    }
+
+    @Test
+    public void getPage() {
+        // create a few domains to be sure get have more than 1 page
+        createDomain();
+        createDomain();
+        createDomain();
+
+        PagedDomainResources response = given()
+                .accept(MediaTypes.HAL_JSON_VALUE)
+                .get("/api/domains?size=2")
+                .then()
+                .statusCode(200).extract().as(PagedDomainResources.class);
+
+        response.getContent().stream().forEach(r -> assertNotNull(r.getContent().getId()));
+        assertEquals(0, response.getMetadata().getNumber());
+        assertEquals(2, response.getMetadata().getSize());
+        assertTrue(response.getMetadata().getTotalElements() >= 3);
+        assertEquals(2, response.getContent().size());
+    }
+
+    static class PagedDomainResources extends PagedResources<DomainResource> {
+
     }
 }

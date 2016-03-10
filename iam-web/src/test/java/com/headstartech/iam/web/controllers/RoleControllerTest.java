@@ -5,11 +5,14 @@ import com.headstartech.iam.common.dto.Permission;
 import com.headstartech.iam.common.dto.Role;
 import com.headstartech.iam.core.jpa.repositories.JpaPermissionRepository;
 import com.headstartech.iam.core.jpa.repositories.JpaRoleRepository;
+import com.headstartech.iam.web.hateoas.resources.PermissionResource;
+import com.headstartech.iam.web.hateoas.resources.RoleResource;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.MediaTypes;
+import org.springframework.hateoas.PagedResources;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -81,7 +84,7 @@ public class RoleControllerTest extends ControllerTestBase {
 
     @Test
     public void canGetExisting() {
-        Role user = createRole(UUID.randomUUID().toString());
+        Role user = createRole();
 
         Role response = given()
                 .accept(MediaTypes.HAL_JSON_VALUE)
@@ -95,7 +98,7 @@ public class RoleControllerTest extends ControllerTestBase {
 
     @Test
     public void canUpdateExisting() {
-        Role user = createRole(UUID.randomUUID().toString());
+        Role user = createRole();
 
         user.setName(UUID.randomUUID().toString());
 
@@ -113,7 +116,7 @@ public class RoleControllerTest extends ControllerTestBase {
 
     @Test
     public void canDeleteExisting() {
-        Role user = createRole(UUID.randomUUID().toString());
+        Role user = createRole();
 
         given()
                 .delete("/api/domains/{domainId}/roles/{roleId}", domain.getId(), user.getId())
@@ -123,9 +126,33 @@ public class RoleControllerTest extends ControllerTestBase {
         assertFalse(jpaRoleRepository.exists(user.getId()));
     }
 
-    private Role createRole(String id) {
+    @Test
+    public void getPage() {
+        // create a few roles to be sure get have more than 1 page
+        createRole();
+        createRole();
+        createRole();
+
+        PagedRoleResources response = given()
+                .accept(MediaTypes.HAL_JSON_VALUE)
+                .get("/api/domains/{domainId}/roles?size=2", domain.getId())
+                .then()
+                .statusCode(200).extract().as(PagedRoleResources.class);
+
+        response.getContent().stream().forEach(r -> assertNotNull(r.getContent().getId()));
+        assertEquals(0, response.getMetadata().getNumber());
+        assertEquals(2, response.getMetadata().getSize());
+        assertTrue(response.getMetadata().getTotalElements() >= 3);
+        assertEquals(2, response.getContent().size());
+    }
+
+    static class PagedRoleResources extends PagedResources<RoleResource> {
+
+    }
+
+    private Role createRole() {
         Role request = new Role();
-        request.setId(id);
+        request.setId(UUID.randomUUID().toString());
         request.setName(UUID.randomUUID().toString());
 
         Role response = given()
