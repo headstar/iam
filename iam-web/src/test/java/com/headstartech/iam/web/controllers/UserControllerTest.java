@@ -131,7 +131,7 @@ public class UserControllerTest extends ControllerTestBase {
         assertFalse(jpaUserRepository.exists(user.getId()));
     }
 
-    User createUser(String id) {
+    private User createUser(String id) {
         User request = new User();
         request.setId(id);
         request.setUserName(UUID.randomUUID().toString());
