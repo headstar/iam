@@ -27,13 +27,6 @@ public class RoleControllerTest extends ControllerTestBase {
     @Autowired
     private JpaRoleRepository jpaRoleRepository;
 
-    private Domain domain;
-
-    @Before
-    public void setup() {
-        domain = createDomain();
-    }
-
     @Test
     public void canCreateWithoutId() {
         Role request = new Role();
@@ -150,21 +143,5 @@ public class RoleControllerTest extends ControllerTestBase {
 
     }
 
-    private Role createRole() {
-        Role request = new Role();
-        request.setId(UUID.randomUUID().toString());
-        request.setName(UUID.randomUUID().toString());
-
-        Role response = given()
-                .accept(MediaTypes.HAL_JSON_VALUE)
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(request)
-                .post("/api/domains/{domainId}/roles", domain.getId())
-                .then()
-                .statusCode(201).extract().as(Role.class);
-
-        assertTrue(jpaRoleRepository.exists(response.getId()));
-        return response;
-    }
 
 }

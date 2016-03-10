@@ -25,13 +25,6 @@ public class PermissionControllerTest extends ControllerTestBase {
     @Autowired
     private JpaPermissionRepository jpaPermissionRepository;
 
-    private Domain domain;
-
-    @Before
-    public void setup() {
-        domain = createDomain();
-    }
-
     @Test
     public void canCreateWithoutId() {
         Permission request = new Permission();
@@ -148,21 +141,6 @@ public class PermissionControllerTest extends ControllerTestBase {
 
     }
 
-    private Permission createPermission() {
-        Permission request = new Permission();
-        request.setId(UUID.randomUUID().toString());
-        request.setName(UUID.randomUUID().toString());
 
-        Permission response = given()
-                .accept(MediaTypes.HAL_JSON_VALUE)
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(request)
-                .post("/api/domains/{domainId}/permissions", domain.getId())
-                .then()
-                .statusCode(201).extract().as(Permission.class);
-
-        assertTrue(jpaPermissionRepository.exists(response.getId()));
-        return response;
-    }
 
 }

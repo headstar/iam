@@ -26,13 +26,6 @@ public class UserControllerTest extends ControllerTestBase {
     @Autowired
     private JpaUserRepository jpaUserRepository;
 
-    private Domain domain;
-
-    @Before
-    public void setup() {
-        domain = createDomain();
-    }
-
     @Test
     public void canCreateWithoutId() {
         User request = new User();
@@ -158,24 +151,6 @@ public class UserControllerTest extends ControllerTestBase {
 
     }
 
-    private User createUser() {
-        User request = new User();
-        request.setId(UUID.randomUUID().toString());
-        request.setUserName(UUID.randomUUID().toString());
-        request.setPassword("aSecret");
-        request.setAttributes(new HashMap<>());
-        request.getAttributes().put("a", "b");
 
-        User response = given()
-                .accept(MediaTypes.HAL_JSON_VALUE)
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(request)
-                .post("/api/domains/{domainId}/users", domain.getId())
-                .then()
-                .statusCode(201).extract().as(User.class);
-
-        assertTrue(jpaUserRepository.exists(response.getId()));
-        return response;
-    }
 
 }
