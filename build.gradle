@@ -50,25 +50,6 @@ subprojects {
         }
     }
 
-    // See: http://csiebler.github.io/blog/2014/02/09/multi-project-code-coverage-using-gradle-and-jacoco/
-    task unitTestCoverage(type: JacocoReport) {
-        // (change this if you e.g. want to calculate unit test/integration test coverage separately)
-        executionData file("build/jacoco/test.exec")
-
-        // Add all relevant sourcesets from the subprojects
-        sourceSets sourceSets.main
-
-        reports {
-            html.destination "${reporting.baseDir}/jacoco/unitTests"
-            csv.enabled false
-            xml.enabled false
-        }
-    }
-
-    // always run the tests before generating the report
-    unitTestCoverage.dependsOn test
-    check.dependsOn unitTestCoverage
-
     findbugs {
         excludeFilter = new File(project.parent.projectDir, "codequality/findbugs/excludeFilter.xml")
     }
