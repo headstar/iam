@@ -9,7 +9,6 @@ import com.headstartech.iam.common.exceptions.IAMException;
 import com.headstartech.iam.common.exceptions.IAMNotFoundException;
 import com.headstartech.iam.core.annotations.TransactionalService;
 import com.headstartech.iam.core.jpa.entities.DomainEntity;
-import com.headstartech.iam.core.jpa.entities.PermissionEntity;
 import com.headstartech.iam.core.jpa.entities.UserEntity;
 import com.headstartech.iam.core.jpa.repositories.JpaDomainRepository;
 import com.headstartech.iam.core.jpa.repositories.JpaUserRepository;
@@ -18,10 +17,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @TransactionalService
@@ -29,11 +28,13 @@ public class JpaDomainService implements DomainService {
 
     private final JpaDomainRepository domainRepo;
     private final JpaUserRepository userRepo;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public JpaDomainService(JpaDomainRepository domainRepo, JpaUserRepository userRepo) {
+    public JpaDomainService(JpaDomainRepository domainRepo, JpaUserRepository userRepo, PasswordEncoder passwordEncoder) {
         this.domainRepo = domainRepo;
         this.userRepo = userRepo;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -104,7 +105,7 @@ public class JpaDomainService implements DomainService {
     }
 
     private boolean authenticate(UserEntity userEntity, AuthenticateRequest authenticateRequest) {
-        return userEntity.getPassword().equals(authenticateRequest.getPassword());
+        return passwordEncoder.matches(authenticateRequest.getPassword(), userEntity.getPassword());
     }
 
     private DomainEntity findDomain(final String id) throws IAMException {

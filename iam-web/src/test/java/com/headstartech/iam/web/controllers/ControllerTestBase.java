@@ -79,11 +79,11 @@ public class ControllerTestBase {
                 .statusCode(201).extract().as(Domain.class);
     }
 
-    protected User createUser(String domainId) {
+    protected User createUser(String domainId, String password) {
         User request = new User();
         request.setId(UUID.randomUUID().toString());
         request.setUserName(UUID.randomUUID().toString());
-        request.setPassword("aSecret");
+        request.setPassword(password);
         request.setAttributes(new HashMap<>());
         request.getAttributes().put("a", "b");
 
@@ -95,6 +95,10 @@ public class ControllerTestBase {
                 .then()
                 .statusCode(201).extract().as(User.class);
         return response;
+    }
+
+    protected User createUser(String domainId) {
+        return createUser(domainId, "aSecret");
     }
 
     protected Permission createPermission(String domainId) {

@@ -1,6 +1,9 @@
 package com.headstartech.iam.web.controllers;
 
+import com.headstartech.iam.common.dto.AuthenticateRequest;
+import com.headstartech.iam.common.dto.AuthenticateResponse;
 import com.headstartech.iam.common.dto.Domain;
+import com.headstartech.iam.common.dto.User;
 import com.headstartech.iam.common.resources.PagedDomainResources;
 import com.headstartech.iam.core.jpa.repositories.JpaDomainRepository;
 import com.headstartech.iam.common.resources.DomainResource;
@@ -113,6 +116,40 @@ public class DomainControllerTest extends ControllerTestBase {
                 .statusCode(204).extract();
 
         assertFalse(jpaDomainRepository.exists(domain.getId()));
+    }
+
+    @Test
+    public void canDeleteAll() {
+        createDomain(UUID.randomUUID().toString());
+        assertTrue(jpaDomainRepository.count() > 0);
+
+        given()
+                .delete("/api/domains")
+                .then()
+                .statusCode(204).extract();
+
+        assertEquals(0, jpaDomainRepository.count());
+    }
+
+    @Test
+    public void canAuthenticate() {
+        Domain domain = createDomain(UUID.randomUUID().toString());
+        User user = createUser(domain.getId(), "mysecret");
+
+        AuthenticateRequest authenticateRequest = new AuthenticateRequest();
+        authenticateRequest.setUserName(user.getUserName());
+        authenticateRequest.setPassword("mysecret");
+
+        AuthenticateResponse authenticateResponse = given()
+                .accept(MediaTypes.HAL_JSON_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(authenticateRequest)
+                .post("/api/domains/{domainId}/authenticate", domain.getId())
+                .then()
+                .statusCode(200).extract().as(AuthenticateResponse.class);
+
+        assertTrue(authenticateResponse.isAuthenticationSuccessful());
+
     }
 
     @Test
