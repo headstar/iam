@@ -2,7 +2,7 @@ package com.headstartech.iam.web.controllers;
 
 import com.headstartech.iam.common.dto.Domain;
 import com.headstartech.iam.core.jpa.repositories.JpaDomainRepository;
-import com.headstartech.iam.web.hateoas.resources.DomainResource;
+import com.headstartech.iam.common.resources.DomainResource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

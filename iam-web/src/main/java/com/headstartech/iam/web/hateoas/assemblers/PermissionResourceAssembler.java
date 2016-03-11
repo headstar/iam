@@ -2,7 +2,7 @@ package com.headstartech.iam.web.hateoas.assemblers;
 
 import com.headstartech.iam.common.dto.Permission;
 import com.headstartech.iam.web.controllers.PermissionRestController;
-import com.headstartech.iam.web.hateoas.resources.PermissionResource;
+import com.headstartech.iam.common.resources.PermissionResource;
 import org.springframework.hateoas.mvc.ResourceAssemblerSupport;
 import org.springframework.stereotype.Component;
 

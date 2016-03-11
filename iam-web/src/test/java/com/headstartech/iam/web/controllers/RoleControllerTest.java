@@ -1,13 +1,8 @@
 package com.headstartech.iam.web.controllers;
 
-import com.headstartech.iam.common.dto.Domain;
-import com.headstartech.iam.common.dto.Permission;
 import com.headstartech.iam.common.dto.Role;
-import com.headstartech.iam.core.jpa.repositories.JpaPermissionRepository;
 import com.headstartech.iam.core.jpa.repositories.JpaRoleRepository;
-import com.headstartech.iam.web.hateoas.resources.PermissionResource;
-import com.headstartech.iam.web.hateoas.resources.RoleResource;
-import org.junit.Before;
+import com.headstartech.iam.common.resources.RoleResource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

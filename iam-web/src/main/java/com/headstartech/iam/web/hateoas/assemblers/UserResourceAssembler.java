@@ -1,11 +1,8 @@
 package com.headstartech.iam.web.hateoas.assemblers;
 
 import com.headstartech.iam.common.dto.User;
-import com.headstartech.iam.common.exceptions.IAMException;
-import com.headstartech.iam.web.controllers.UserRestController;
-import com.headstartech.iam.web.hateoas.resources.UserResource;
+import com.headstartech.iam.common.resources.UserResource;
 import org.springframework.hateoas.ResourceAssembler;
-import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.stereotype.Component;
 
 @Component

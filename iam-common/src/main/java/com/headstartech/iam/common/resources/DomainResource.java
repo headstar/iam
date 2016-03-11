@@ -1,4 +1,4 @@
-package com.headstartech.iam.web.hateoas.resources;
+package com.headstartech.iam.common.resources;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.headstartech.iam.common.dto.Domain;

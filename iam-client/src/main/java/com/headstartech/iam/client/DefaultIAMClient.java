@@ -1,15 +1,12 @@
 package com.headstartech.iam.client;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.headstartech.iam.common.dto.Domain;
 import com.headstartech.iam.common.dto.Permission;
 import com.headstartech.iam.common.dto.Role;
 import com.headstartech.iam.common.dto.User;
+import com.headstartech.iam.common.resources.*;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.hateoas.MediaTypes;
-import org.springframework.hateoas.PagedResources;
-import org.springframework.hateoas.Resource;
-import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
@@ -243,52 +240,5 @@ public class DefaultIAMClient implements IAMClient {
             throw new RuntimeException(e);
         }
     }
-
-    static class DomainResource extends Resource<Domain> {
-        @JsonCreator
-        public DomainResource(Domain domain) {
-            super(domain);
-        }
-    }
-
-    static class UserResource extends Resource<User> {
-        @JsonCreator
-        public UserResource(User user) {
-            super(user);
-        }
-    }
-
-    static class RoleResource extends Resource<Role> {
-        @JsonCreator
-        public RoleResource(Role role) {
-            super(role);
-        }
-    }
-
-    static class PermissionResource extends Resource<Permission> {
-        @JsonCreator
-        public PermissionResource (Permission permission) {
-            super(permission);
-        }
-    }
-
-    static class PermissionResources extends Resources<Permission> {
-
-    }
-
-    static class PagedDomainResources extends PagedResources<DomainResource> {
-
-    }
-
-    static class PagedUsersResources extends PagedResources<UserResource> {
-
-    }
-
-    static class PagedRolesResources extends PagedResources<RoleResource> {
-
-    }
-
-    static class PagedPermissionsResources extends PagedResources<PermissionResource> {
-
-    }
+    
 }

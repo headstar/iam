@@ -1,15 +1,10 @@
 package com.headstartech.iam.web.controllers;
 
 import com.headstartech.iam.common.dto.Permission;
-import com.headstartech.iam.common.dto.Role;
 import com.headstartech.iam.common.exceptions.IAMException;
 import com.headstartech.iam.core.services.PermissionService;
-import com.headstartech.iam.core.services.RoleService;
 import com.headstartech.iam.web.hateoas.assemblers.PermissionResourceAssembler;
-import com.headstartech.iam.web.hateoas.assemblers.RoleResourceAssembler;
-import com.headstartech.iam.web.hateoas.resources.PermissionResource;
-import com.headstartech.iam.web.hateoas.resources.RoleResource;
-import com.headstartech.iam.web.hateoas.resources.UserResource;
+import com.headstartech.iam.common.resources.PermissionResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;

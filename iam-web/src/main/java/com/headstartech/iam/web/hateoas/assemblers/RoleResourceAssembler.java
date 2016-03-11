@@ -2,9 +2,7 @@ package com.headstartech.iam.web.hateoas.assemblers;
 
 import com.headstartech.iam.common.dto.Role;
 import com.headstartech.iam.web.controllers.RoleRestController;
-import com.headstartech.iam.web.hateoas.resources.RoleResource;
-import com.headstartech.iam.web.hateoas.resources.UserResource;
-import org.springframework.hateoas.ResourceAssembler;
+import com.headstartech.iam.common.resources.RoleResource;
 import org.springframework.hateoas.mvc.ResourceAssemblerSupport;
 import org.springframework.stereotype.Component;
 
