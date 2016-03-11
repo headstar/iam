@@ -1,6 +1,7 @@
 package com.headstartech.iam.web.controllers;
 
 import com.headstartech.iam.common.dto.Domain;
+import com.headstartech.iam.common.resources.PagedDomainResources;
 import com.headstartech.iam.core.jpa.repositories.JpaDomainRepository;
 import com.headstartech.iam.common.resources.DomainResource;
 import org.junit.Test;
@@ -132,9 +133,5 @@ public class DomainControllerTest extends ControllerTestBase {
         assertEquals(2, response.getMetadata().getSize());
         assertTrue(response.getMetadata().getTotalElements() >= 3);
         assertEquals(2, response.getContent().size());
-    }
-
-    static class PagedDomainResources extends PagedResources<DomainResource> {
-
     }
 }
