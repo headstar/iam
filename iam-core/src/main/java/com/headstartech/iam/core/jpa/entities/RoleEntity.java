@@ -35,7 +35,7 @@ public class RoleEntity extends BaseEntity {
     public void addPermission(PermissionEntity permission) {
         getPermissions().add(permission);
     }
-    
+
     public Set<PermissionEntity> getPermissions() {
         return permissions;
     }
