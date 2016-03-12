@@ -35,11 +35,7 @@ public class RoleEntity extends BaseEntity {
     public void addPermission(PermissionEntity permission) {
         getPermissions().add(permission);
     }
-
-    public void removePermission(PermissionEntity permission) {
-        getPermissions().remove(permission);
-    }
-
+    
     public Set<PermissionEntity> getPermissions() {
         return permissions;
     }
