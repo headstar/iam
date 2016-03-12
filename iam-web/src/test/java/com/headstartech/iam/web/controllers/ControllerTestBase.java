@@ -54,6 +54,7 @@ public class ControllerTestBase {
     @Before
     public void baseBeforeTestSetup() {
         RestAssured.port = port;
+        RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
         domain = createDomain();
     }
 
