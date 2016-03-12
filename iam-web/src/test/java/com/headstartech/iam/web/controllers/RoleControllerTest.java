@@ -1,6 +1,10 @@
 package com.headstartech.iam.web.controllers;
 
+import com.headstartech.iam.common.dto.Permission;
 import com.headstartech.iam.common.dto.Role;
+import com.headstartech.iam.common.dto.User;
+import com.headstartech.iam.common.resources.PermissionResources;
+import com.headstartech.iam.common.resources.RoleResources;
 import com.headstartech.iam.core.jpa.repositories.JpaRoleRepository;
 import com.headstartech.iam.common.resources.RoleResource;
 import org.junit.Test;
@@ -11,7 +15,11 @@ import org.springframework.hateoas.PagedResources;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.junit.Assert.*;
@@ -112,6 +120,137 @@ public class RoleControllerTest extends ControllerTestBase {
                 .statusCode(204).extract();
 
         assertFalse(jpaRoleRepository.exists(user.getId()));
+    }
+
+    @Test
+    public void canAddPermissions() {
+        Role role = createRole();
+
+        Permission permission1 = createPermission();
+        Set<String> firstPermission = new HashSet<>();
+        firstPermission.add(permission1.getId());
+
+        // add a permission
+        given()
+                .accept(MediaTypes.HAL_JSON_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(firstPermission)
+                .post("/api/domains/{domainId}/roles/{roleId}/permissions", domain.getId(), role.getId())
+                .then()
+                .statusCode(204);
+
+        PermissionResources assignedPermissions = given()
+                .accept(MediaTypes.HAL_JSON_VALUE)
+                .get("/api/domains/{domainId}/roles/{roleId}/permissions", domain.getId(), role.getId())
+                .then()
+                .statusCode(200).extract().as(PermissionResources.class);
+
+        assertEquals(1, assignedPermissions.getContent().size());
+        assignedPermissions.getContent().stream().forEach(r -> r.getContent().getId().equals(permission1.getId()));
+
+        // add another permission
+        Permission permission2 = createPermission();
+        Set<String> secondPermission = new HashSet<>();
+        secondPermission.add(permission2.getId());
+        given()
+                .accept(MediaTypes.HAL_JSON_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(secondPermission)
+                .post("/api/domains/{domainId}/roles/{roleId}/permissions", domain.getId(), role.getId())
+                .then()
+                .statusCode(204);
+
+        assignedPermissions = given()
+                .accept(MediaTypes.HAL_JSON_VALUE)
+                .get("/api/domains/{domainId}/roles/{roleId}/permissions", domain.getId(), role.getId())
+                .then()
+                .statusCode(200).extract().as(PermissionResources.class);
+
+        assertEquals(2, assignedPermissions.getContent().size());
+        List<String> ids = assignedPermissions.getContent().stream().map(r -> r.getContent().getId()).collect(Collectors.toList());
+        assertTrue(ids.contains(permission1.getId()));
+        assertTrue(ids.contains(permission2.getId()));
+    }
+
+    @Test
+    public void canSetPermissions() {
+        Role role = createRole();
+
+        Permission permission1 = createPermission();
+        Set<String> firstPermission = new HashSet<>();
+        firstPermission.add(permission1.getId());
+
+        // add a permission
+        given()
+                .accept(MediaTypes.HAL_JSON_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(firstPermission)
+                .post("/api/domains/{domainId}/roles/{roleId}/permissions", domain.getId(), role.getId())
+                .then()
+                .statusCode(204);
+
+        PermissionResources assignedPermissions = given()
+                .accept(MediaTypes.HAL_JSON_VALUE)
+                .get("/api/domains/{domainId}/roles/{roleId}/permissions", domain.getId(), role.getId())
+                .then()
+                .statusCode(200).extract().as(PermissionResources.class);
+
+        assertEquals(1, assignedPermissions.getContent().size());
+        assignedPermissions.getContent().stream().forEach(r -> r.getContent().getId().equals(permission1.getId()));
+
+        // set another permission
+        Permission permission2 = createPermission();
+        Set<String> secondPermission = new HashSet<>();
+        secondPermission.add(permission2.getId());
+        given()
+                .accept(MediaTypes.HAL_JSON_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(secondPermission)
+                .put("/api/domains/{domainId}/roles/{roleId}/permissions", domain.getId(), role.getId())
+                .then()
+                .statusCode(204);
+
+        assignedPermissions = given()
+                .accept(MediaTypes.HAL_JSON_VALUE)
+                .get("/api/domains/{domainId}/roles/{roleId}/permissions", domain.getId(), role.getId())
+                .then()
+                .statusCode(200).extract().as(PermissionResources.class);
+
+        assertEquals(1, assignedPermissions.getContent().size());
+        List<String> ids = assignedPermissions.getContent().stream().map(r -> r.getContent().getId()).collect(Collectors.toList());
+        assertTrue(ids.contains(permission2.getId()));
+    }
+
+    @Test
+    public void canRemovePermissions() {
+        Role role = createRole();
+
+        Permission permission1 = createPermission();
+        Set<String> firstPermission = new HashSet<>();
+        firstPermission.add(permission1.getId());
+
+        // add a permission
+        given()
+                .accept(MediaTypes.HAL_JSON_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(firstPermission)
+                .post("/api/domains/{domainId}/roles/{roleId}/permissions", domain.getId(), role.getId())
+                .then()
+                .statusCode(204);
+
+        // remove permissions
+        given()
+                .accept(MediaTypes.HAL_JSON_VALUE)
+                .delete("/api/domains/{domainId}/roles/{roleId}/permissions", domain.getId(), role.getId())
+                .then()
+                .statusCode(204);
+
+        PermissionResources assignedPermissions = given()
+                .accept(MediaTypes.HAL_JSON_VALUE)
+                .get("/api/domains/{domainId}/roles/{roleId}/permissions", domain.getId(), role.getId())
+                .then()
+                .statusCode(200).extract().as(PermissionResources.class);
+        assertEquals(0, assignedPermissions.getContent().size());
     }
 
     @Test

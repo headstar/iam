@@ -171,7 +171,9 @@ public class UserControllerTest extends ControllerTestBase {
                 .statusCode(200).extract().as(RoleResources.class);
 
         assertEquals(2, assignedRoles.getContent().size());
-        assignedRoles.getContent().stream().map(r -> r.getContent().getId()).forEach(id -> assertTrue(id.equals(role1.getId()) || id.equals(role2.getId())));
+        List<String> ids = assignedRoles.getContent().stream().map(r -> r.getContent().getId()).collect(Collectors.toList());
+        assertTrue(ids.contains(role1.getId()));
+        assertTrue(ids.contains(role2.getId()));
     }
 
     @Test

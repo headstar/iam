@@ -2,6 +2,7 @@ package com.headstartech.iam.web.controllers;
 
 import com.headstartech.iam.common.dto.Role;
 import com.headstartech.iam.common.exceptions.IAMException;
+import com.headstartech.iam.common.resources.PermissionResources;
 import com.headstartech.iam.core.services.RoleService;
 import com.headstartech.iam.web.hateoas.assemblers.PermissionResourceAssembler;
 import com.headstartech.iam.web.hateoas.assemblers.RoleResourceAssembler;
@@ -85,9 +86,8 @@ public class RoleRestController {
 
     @RequestMapping(value = "/{roleId}/permissions", method = RequestMethod.GET, produces = MediaTypes.HAL_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public Resources<PermissionResource> getPermissions(@PathVariable("domainId") final String domainId, @PathVariable("roleId") final String roleId) throws IAMException {
-        Resources<PermissionResource> resources = new Resources<>(permissionResourceAssembler.toResources(roleService.getPermissions(domainId, roleId)));
-        return resources;
+    public PermissionResources getPermissions(@PathVariable("domainId") final String domainId, @PathVariable("roleId") final String roleId) throws IAMException {
+        return new PermissionResources(permissionResourceAssembler.toResources(roleService.getPermissions(domainId, roleId)));
     }
 
     @RequestMapping(value = "/{roleId}/permissions", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
