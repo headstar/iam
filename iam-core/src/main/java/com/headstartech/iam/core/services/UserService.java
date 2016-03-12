@@ -26,6 +26,8 @@ public interface UserService {
 
     void addRoles(String domainId, String userId, Set<String> roleIds) throws IAMException;
 
+    void setRoles(String domainId, String userId, Set<String> roleIds) throws IAMException;
+
     Set<Role> getRoles(String domainId, String userId) throws IAMException;
 
     void removeAllRoles(String domainId, String userId) throws IAMException;

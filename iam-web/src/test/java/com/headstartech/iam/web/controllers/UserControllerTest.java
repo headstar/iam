@@ -1,6 +1,8 @@
 package com.headstartech.iam.web.controllers;
 
+import com.headstartech.iam.common.dto.Role;
 import com.headstartech.iam.common.dto.User;
+import com.headstartech.iam.common.resources.RoleResources;
 import com.headstartech.iam.core.jpa.repositories.JpaUserRepository;
 import com.headstartech.iam.common.resources.UserResource;
 import org.junit.Test;
@@ -11,8 +13,8 @@ import org.springframework.hateoas.PagedResources;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.junit.Assert.*;
@@ -122,6 +124,126 @@ public class UserControllerTest extends ControllerTestBase {
                 .statusCode(204).extract();
 
         assertFalse(jpaUserRepository.exists(user.getId()));
+    }
+
+    @Test
+    public void canAddRoles() {
+        User user = createUser();
+
+        Role role1 = createRole();
+        Set<String> firstRole = new HashSet<>();
+        firstRole.add(role1.getId());
+
+        // add a role
+        given()
+                .accept(MediaTypes.HAL_JSON_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(firstRole)
+                .post("/api/domains/{domainId}/users/{userId}/roles", domain.getId(), user.getId())
+                .then()
+                .statusCode(204);
+
+        RoleResources assignedRoles = given()
+                .accept(MediaTypes.HAL_JSON_VALUE)
+                .get("/api/domains/{domainId}/users/{userId}/roles", domain.getId(), user.getId())
+                .then()
+                .statusCode(200).extract().as(RoleResources.class);
+
+        assertEquals(1, assignedRoles.getContent().size());
+        assignedRoles.getContent().stream().forEach(r -> r.getContent().getId().equals(role1.getId()));
+
+        // add another role
+        Role role2 = createRole();
+        Set<String> secondRole = new HashSet<>();
+        secondRole.add(role2.getId());
+        given()
+                .accept(MediaTypes.HAL_JSON_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(secondRole)
+                .post("/api/domains/{domainId}/users/{userId}/roles", domain.getId(), user.getId())
+                .then()
+                .statusCode(204);
+
+        assignedRoles = given()
+                .accept(MediaTypes.HAL_JSON_VALUE)
+                .get("/api/domains/{domainId}/users/{userId}/roles", domain.getId(), user.getId())
+                .then()
+                .statusCode(200).extract().as(RoleResources.class);
+
+        assertEquals(2, assignedRoles.getContent().size());
+        assignedRoles.getContent().stream().map(r -> r.getContent().getId()).forEach(id -> assertTrue(id.equals(role1.getId()) || id.equals(role2.getId())));
+    }
+
+    @Test
+    public void canSetRoles() {
+        User user = createUser();
+
+        Role role1 = createRole();
+        Set<String> firstRole = new HashSet<>();
+        firstRole.add(role1.getId());
+
+        // add a role
+        given()
+                .accept(MediaTypes.HAL_JSON_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(firstRole)
+                .post("/api/domains/{domainId}/users/{userId}/roles", domain.getId(), user.getId())
+                .then()
+                .statusCode(204);
+
+        // set another role
+        Role role2 = createRole();
+        Set<String> secondRole = new HashSet<>();
+        secondRole.add(role2.getId());
+        given()
+                .accept(MediaTypes.HAL_JSON_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(secondRole)
+                .put("/api/domains/{domainId}/users/{userId}/roles", domain.getId(), user.getId())
+                .then()
+                .statusCode(204);
+
+        RoleResources assignedRoles = given()
+                .accept(MediaTypes.HAL_JSON_VALUE)
+                .get("/api/domains/{domainId}/users/{userId}/roles", domain.getId(), user.getId())
+                .then()
+                .statusCode(200).extract().as(RoleResources.class);
+
+        assertEquals(1, assignedRoles.getContent().size());
+        List<String> ids = assignedRoles.getContent().stream().map(r -> r.getContent().getId()).collect(Collectors.toList());
+        assertTrue(ids.contains(role2.getId()));
+    }
+
+    @Test
+    public void canRemoveRoles() {
+        User user = createUser();
+
+        Role role1 = createRole();
+        Set<String> roleIds = new HashSet<>();
+        roleIds.add(role1.getId());
+
+        // add a role
+        given()
+                .accept(MediaTypes.HAL_JSON_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(roleIds)
+                .post("/api/domains/{domainId}/users/{userId}/roles", domain.getId(), user.getId())
+                .then()
+                .statusCode(204);
+
+        // delete roles
+        given()
+                .accept(MediaTypes.HAL_JSON_VALUE)
+                .delete("/api/domains/{domainId}/users/{userId}/roles", domain.getId(), user.getId())
+                .then()
+                .statusCode(204);
+
+        RoleResources assignedRoles = given()
+                .accept(MediaTypes.HAL_JSON_VALUE)
+                .get("/api/domains/{domainId}/users/{userId}/roles", domain.getId(), user.getId())
+                .then()
+                .statusCode(200).extract().as(RoleResources.class);
+        assertEquals(0, assignedRoles.getContent().size());
     }
 
     @Test

@@ -92,6 +92,13 @@ public class JpaUserService implements UserService {
     }
 
     @Override
+    public void setRoles(String domainId, String userId, Set<String> roleIds) throws IAMException {
+        UserEntity userEntity = findUser(domainId, userId);
+        userEntity.getRoles().clear();
+        roleIds.stream().forEach(roleId -> userEntity.addRole(roleRepo.findOne(roleId)));
+    }
+
+    @Override
     public Set<Role> getRoles(String domainId, String userId) throws IAMException {
         UserEntity userEntity = findUser(domainId, userId);
         return userEntity.getRoles().stream().map(RoleEntity::getDTO).collect(Collectors.toSet());
