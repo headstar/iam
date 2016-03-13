@@ -10,7 +10,7 @@ dependencies {
     compile("org.apache.commons:commons-lang3")
 
     testCompile("org.springframework.boot:spring-boot-starter-test")
-    testRuntime("javax.el:el-api:2.2.4")
+    testRuntime("javax.el:javax.el-api:2.2.4")
     testRuntime("org.glassfish.web:javax.el:2.2.4")
     testRuntime("com.h2database:h2:1.4.190")
 
