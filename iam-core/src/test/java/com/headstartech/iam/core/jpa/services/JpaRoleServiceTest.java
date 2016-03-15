@@ -3,6 +3,7 @@ package com.headstartech.iam.core.jpa.services;
 import com.headstartech.iam.common.dto.Domain;
 import com.headstartech.iam.common.dto.Role;
 import com.headstartech.iam.common.exceptions.IAMBadRequestException;
+import com.headstartech.iam.common.exceptions.IAMConflictException;
 import com.headstartech.iam.common.exceptions.IAMException;
 import com.headstartech.iam.common.exceptions.IAMNotFoundException;
 import com.headstartech.iam.core.services.DomainService;
@@ -37,6 +38,19 @@ public class JpaRoleServiceTest extends TestBase {
         domainId = domainService.createDomain(domain);
         roleId = roleService.createRole(domainId, role);
         role = roleService.getRole(domainId, roleId);
+    }
+
+    @Test(expected = IAMConflictException.class)
+    public void cannotCreateWithExistingId() throws IAMException {
+        // given
+        Role aRole = new Role();
+        aRole.setId(role.getId());
+        aRole.setName(UUID.randomUUID().toString());
+
+        // when
+        roleService.createRole(domainId, aRole);
+
+        // then... exception should be thrown
     }
 
     @Test(expected = IAMNotFoundException.class)

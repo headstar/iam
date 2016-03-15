@@ -3,6 +3,7 @@ package com.headstartech.iam.core.jpa.services;
 import com.headstartech.iam.common.dto.Permission;
 import com.headstartech.iam.common.dto.Role;
 import com.headstartech.iam.common.exceptions.IAMBadRequestException;
+import com.headstartech.iam.common.exceptions.IAMConflictException;
 import com.headstartech.iam.common.exceptions.IAMException;
 import com.headstartech.iam.common.exceptions.IAMNotFoundException;
 import com.headstartech.iam.core.annotations.TransactionalService;
@@ -40,6 +41,9 @@ public class JpaRoleService implements RoleService {
     @Override
     public String createRole(String domainId, Role role) throws IAMException {
         DomainEntity domainEntity = findDomain(domainId);
+        if (StringUtils.isNotBlank(role.getId()) && roleRepo.exists(role.getId())) {
+            throw new IAMConflictException("A role with id " + role.getId() + " already exists.");
+        }
 
         final RoleEntity roleEntity = new RoleEntity();
         roleEntity.setId(StringUtils.isBlank(role.getId()) ? RandomString.randomId() : role.getId());
