@@ -49,7 +49,8 @@ public class JpaRoleService implements RoleService {
     }
 
     @Override
-    public Page<Role> getRoles(String domainId, Pageable page) {
+    public Page<Role> getRoles(String domainId, Pageable page) throws IAMException {
+        findDomain(domainId);
         Page<RoleEntity> roleEntities = roleRepo.findAll(JpaRoleSpecifications.findRolesForDomain(domainId), page);
         return roleEntities.map(RoleEntity::getDTO);
     }

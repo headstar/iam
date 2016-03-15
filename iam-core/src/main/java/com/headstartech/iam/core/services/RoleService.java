@@ -22,7 +22,7 @@ public interface RoleService {
 
     void deleteRole(String domainId, String roleId) throws IAMException;
 
-    Page<Role> getRoles(String domainId, Pageable page);
+    Page<Role> getRoles(String domainId, Pageable page) throws IAMException;
 
     Set<Permission> getPermissions(String domainId, String roleId) throws IAMException;
 

@@ -57,7 +57,7 @@ public class RoleRestController {
     @RequestMapping(method = RequestMethod.GET, produces = MediaTypes.HAL_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public PagedResources<RoleResource> getRoles(@PathVariable("domainId") final String domainId, @PageableDefault(page = 0, size = 10) final Pageable page,
-                                                 final PagedResourcesAssembler<Role> assembler) {
+                                                 final PagedResourcesAssembler<Role> assembler) throws IAMException {
         return assembler.toResource(
                 roleService.getRoles(domainId, page),
                 roleResourceAssembler);
