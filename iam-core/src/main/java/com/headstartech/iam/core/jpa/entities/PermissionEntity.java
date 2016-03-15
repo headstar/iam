@@ -48,6 +48,8 @@ public class PermissionEntity extends BaseEntity {
         Permission permission = new Permission();
         permission.setId(getId());
         permission.setName(getName());
+        permission.setCreated(getCreated());
+        permission.setUpdated(getUpdated());
         return permission;
     }
 }

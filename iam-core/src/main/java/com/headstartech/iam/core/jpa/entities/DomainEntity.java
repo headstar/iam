@@ -37,6 +37,8 @@ public class DomainEntity extends BaseEntity {
         Domain domain = new Domain();
         domain.setId(getId());
         domain.setDescription(getDescription());
+        domain.setCreated(getCreated());
+        domain.setUpdated(getUpdated());
         return domain;
     }
 }

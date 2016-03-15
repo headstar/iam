@@ -5,10 +5,8 @@ import com.headstartech.iam.common.exceptions.IAMPreconditionException;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Length;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Version;
+import javax.persistence.*;
+import java.util.Date;
 
 @MappedSuperclass
 public class BaseEntity {
@@ -22,6 +20,41 @@ public class BaseEntity {
     @Column(name = "entity_version", nullable = false)
     private Long entityVersion;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "created", nullable = false, updatable = false)
+    private Date created;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "updated", nullable = false)
+    private Date updated;
+
+    @PrePersist
+    protected void onCreateBaseEntity() {
+        final Date date = new Date();
+        this.updated = date;
+        this.created = date;
+    }
+
+    @PreUpdate
+    protected void onUpdateBaseEntity() {
+        this.updated = new Date();
+    }
+
+    public Date getCreated() {
+        return created;
+    }
+
+    protected void setCreated(Date created) {
+        this.created = new Date(created.getTime());
+    }
+
+    public Date getUpdated() {
+        return updated;
+    }
+
+    protected void setUpdated(Date updated) {
+        this.updated = new Date(updated.getTime());
+    }
 
     public void setId(final String id) throws IAMPreconditionException {
         if (StringUtils.isBlank(this.id)) {

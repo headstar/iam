@@ -64,6 +64,8 @@ public class RoleEntity extends BaseEntity {
         Role role = new Role();
         role.setId(getId());
         role.setName(getName());
+        role.setCreated(getCreated());
+        role.setUpdated(getUpdated());
         return role;
     }
 }
